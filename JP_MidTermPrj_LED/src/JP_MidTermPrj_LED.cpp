@@ -5,6 +5,12 @@
  * Date:12/16/2023
  */
 #include "Particle.h"
+#include "Adafruit_GFX.h"
+#include "Adafruit_SSD1306.h"
+// OLED
+const int OLED_RESET=-1;
+Adafruit_SSD1306 display(OLED_RESET);
+
 const int REDLEDPIN = D13;
 const int GREENLEDPIN = D14;
 const int BLUELEDPIN = D15;
@@ -23,10 +29,18 @@ pinMode(motionPin, INPUT);
 pinMode(REDLEDPIN, OUTPUT);
 pinMode(GREENLEDPIN, OUTPUT);
 pinMode(BLUELEDPIN, OUTPUT);
+pinMode(LASERPIN, OUTPUT);
 j = 100;
 
 //pinMode(motionPin, INPUT_PULLUP);
 Serial.begin(9600);
+waitFor(Serial.isConnected,10000);
+display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+display.display();
+delay(2000);
+display.clearDisplay();
+display.setTextSize(1);
+display.setTextColor(WHITE);
 }
 
 // loop() runs over and over again, as quickly as it can execute.
@@ -37,18 +51,27 @@ void loop() {
   analogWrite(REDLEDPIN, HIGH);
   analogWrite(GREENLEDPIN, HIGH);
   analogWrite(BLUELEDPIN, HIGH);
+  analogWrite(LASERPIN, HIGH);
   delay (10);
 
  if (pirState==LOW){
-   Serial.printf("Motion detected!\n");
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Motion detected!\n");
+display.display();
+delay(2000);
   pirState = HIGH;
   }
  } else{
   analogWrite(REDLEDPIN, LOW);
-  analogWrite(GREENLEDPIN, LOW);;
+  analogWrite(GREENLEDPIN, LOW);
   analogWrite(BLUELEDPIN, LOW);
+  analogWrite(LASERPIN, LOW);
   if (pirState==HIGH){
- Serial.printf("Motion ended!\n");
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Motion ended!\n");
+display.display();
  pirState = LOW;
  }
  }

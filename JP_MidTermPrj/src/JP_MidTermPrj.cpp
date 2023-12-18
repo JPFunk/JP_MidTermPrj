@@ -10,6 +10,11 @@
 #include "Particle.h"
 #include "IoTClassroom_CNM.h"
 #include "Encoder.h"
+#include "Adafruit_GFX.h"
+#include "Adafruit_SSD1306.h"
+// OLED
+const int OLED_RESET=-1;
+Adafruit_SSD1306 display(OLED_RESET);
 //Hue
 int BULB; 
 int color;
@@ -48,8 +53,11 @@ const int LEDDELAY=20;
 int j;
 //MotionSensor
 int motionPin=D11;
+int pirState=LOW; 
+int moval=0;
 // Let Device OS manage the connection to the Particle Cloud
 SYSTEM_MODE(MANUAL);
+SYSTEM_THREAD(ENABLED);
 // Run the application and system concurrently in separate threads
 //SYSTEM_THREAD(ENABLED);
 // Show system, cloud connectivity, and application logs over USB
@@ -58,10 +66,19 @@ SYSTEM_MODE(MANUAL);
 // setup() runs once, when the device is first turned on
 void setup() {
   // Put initialization like pinMode and begin functions here
+Serial.begin(9600);
+waitFor(Serial.isConnected,10000);
+display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+display.display();
+delay(2000);
+display.clearDisplay();
+display.setTextSize(1);
+display.setTextColor(WHITE);
 // SuperBright LED
 pinMode(REDLEDPIN, OUTPUT);
 pinMode(GREENLEDPIN, OUTPUT);
 pinMode(BLUELEDPIN, OUTPUT);
+pinMode(LASERPIN, OUTPUT);
 j = 100;
 pinMode(motionPin, INPUT_PULLUP);
 
@@ -90,12 +107,36 @@ lightTime=millis();
 void loop() {
   // The core of your code will likely live here.
 //Motion PIR sensor
-int motionState = digitalRead(motionPin);
-if(motionState == LOW) {
-  analogWrite (REDLEDPIN, HIGH);
-  } else {
-  analogWrite (REDLEDPIN, LOW);
-  }
+moval=digitalRead(motionPin);
+if (moval==HIGH){
+analogWrite(REDLEDPIN, HIGH);
+analogWrite(GREENLEDPIN, HIGH);
+analogWrite(BLUELEDPIN, HIGH);
+analogWrite(LASERPIN, HIGH);
+delay (10);
+
+if (pirState==LOW){
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Motion detected!\n");
+display.display();
+delay(2000);
+pirState = HIGH;
+}
+} else{
+analogWrite(REDLEDPIN, LOW);
+analogWrite(GREENLEDPIN, LOW);
+analogWrite(BLUELEDPIN, LOW);
+analogWrite(LASERPIN, LOW);
+if (pirState==HIGH){
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Motion ended!\n");
+display.display();
+delay(2000);
+pirState = LOW;
+}
+}
 
 //SuperBright LED
   for (j=0; j <= 255; j++) {
