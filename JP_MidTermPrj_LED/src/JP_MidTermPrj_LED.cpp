@@ -5,15 +5,15 @@
  * Date:12/16/2023
  */
 #include "Particle.h"
-
 const int REDLEDPIN = D13;
 const int GREENLEDPIN = D14;
 const int BLUELEDPIN = D15;
+const int LASERPIN = D19;
 const int LEDDELAY = 20;
 int j;
-int motionPin=D10;
+int motionPin=D11;
 int pirState = LOW; 
-int val = 0; 
+int moval = 0; 
 SYSTEM_MODE(SEMI_AUTOMATIC);
 
 // setup() runs once, when the device is first turned on.
@@ -32,15 +32,21 @@ Serial.begin(9600);
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
   // The core of your code will likely live here.
- val=digitalRead(motionPin);
- if (val==HIGH){
+ moval=digitalRead(motionPin);
+ if (moval==HIGH){
   analogWrite(REDLEDPIN, HIGH);
+  analogWrite(GREENLEDPIN, HIGH);
+  analogWrite(BLUELEDPIN, HIGH);
+  delay (10);
+
  if (pirState==LOW){
    Serial.printf("Motion detected!\n");
   pirState = HIGH;
   }
  } else{
   analogWrite(REDLEDPIN, LOW);
+  analogWrite(GREENLEDPIN, LOW);;
+  analogWrite(BLUELEDPIN, LOW);
   if (pirState==HIGH){
  Serial.printf("Motion ended!\n");
  pirState = LOW;

@@ -21,6 +21,7 @@ int lightDelay;
 Button grayButton (D3);
 Button redButton (D2);
 Button myEncBtn (D17);
+Button brtLedLaser (D4);
 bool hueOnOff;
 bool wemoOnOff;
 //Encoder
@@ -42,10 +43,11 @@ const int MYWEMO=0;
 const int REDLEDPIN=D13;
 const int GREENLEDPIN=D14;
 const int BLUELEDPIN=D15;
+const int LASERPIN = D19;
 const int LEDDELAY=20;
 int j;
 //MotionSensor
-int motionPin=D10;
+int motionPin=D11;
 // Let Device OS manage the connection to the Particle Cloud
 SYSTEM_MODE(MANUAL);
 // Run the application and system concurrently in separate threads
@@ -87,6 +89,7 @@ lightTime=millis();
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
   // The core of your code will likely live here.
+//Motion PIR sensor
 int motionState = digitalRead(motionPin);
 if(motionState == LOW) {
   analogWrite (REDLEDPIN, HIGH);
