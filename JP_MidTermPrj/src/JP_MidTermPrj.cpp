@@ -26,9 +26,10 @@ int lightDelay;
 Button grayButton (D3);
 Button redButton (D2);
 Button myEncBtn (D17);
-Button brtLedLaser (D4);
+Button blackButton (D4);
 bool hueOnOff;
 bool wemoOnOff;
+bool pirOnOff;
 //Encoder
 const int maxPos = 95;
 const int minPos = 0;
@@ -52,6 +53,7 @@ const int LASERPIN = D19;
 const int LEDDELAY=20;
 int j;
 //MotionSensor
+const int MYPIR=0;
 int motionPin=D11;
 int pirState=LOW; 
 int moval=0;
@@ -107,6 +109,18 @@ lightTime=millis();
 void loop() {
   // The core of your code will likely live here.
 //Motion PIR sensor
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Turning on PIR# %i\n",MYPIR);
+display.display();
+delay(2000);
+if (blackButton.isClicked()) {
+pirOnOff= !pirOnOff;
+}
+if (redButton.isClicked()) {
+pirOnOff= !pirOnOff;
+}
+
 moval=digitalRead(motionPin);
 if (moval==HIGH){
 analogWrite(REDLEDPIN, HIGH);
@@ -139,14 +153,14 @@ pirState = LOW;
 }
 
 //SuperBright LED
-  for (j=0; j <= 255; j++) {
-    analogWrite (REDLEDPIN, j);
-    delay(LEDDELAY); 
-   }
-  for (j=255; j >= 0; j--) {
-    analogWrite (REDLEDPIN, j);
-    delay(LEDDELAY);
-   }
+  // for (j=0; j <= 255; j++) {
+  //   analogWrite (REDLEDPIN, j);
+  //   delay(LEDDELAY); 
+  //  }
+  // for (j=255; j >= 0; j--) {
+  //   analogWrite (REDLEDPIN, j);
+  //   delay(LEDDELAY);
+  //  }
 
 //Button Functions
 if (grayButton.isClicked()) {
@@ -177,12 +191,20 @@ Serial.printf("%i\n",hueBright);
 prevenc = hueBright;
 }
 //Hue
-Serial.printf("Setting color of bulb %i to color %06i\n",BULB,HueRainbow[color%7]);
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Setting color of bulb %i to color %06i\n",BULB,HueRainbow[color%7]);
+display.display();
+delay(2000);
 setHue(BULB,hueOnOff,colorNum,hueBright,255);
 delay(100);
 
 //Wemo button
-Serial.printf("Turning on Wemo# %i\n",MYWEMO);
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Turning on Wemo# %i\n",MYWEMO);
+display.display();
+delay(2000);
 if (redButton.isClicked()) {
 wemoOnOff= !wemoOnOff;
 }
