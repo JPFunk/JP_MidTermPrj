@@ -12,6 +12,8 @@
 #include "Encoder.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
+#include <math.h>
+#include "JPBitmap.h"
 // OLED
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
@@ -49,7 +51,7 @@ const int MYWEMO=0;
 const int REDLEDPIN=D13;
 const int GREENLEDPIN=D14;
 const int BLUELEDPIN=D15;
-const int LASERPIN = D19;
+//const int LASERPIN = D19; //Temporary PIN for Laser
 const int LEDDELAY=20;
 int j;
 //MotionSensor
@@ -57,9 +59,17 @@ const int MYPIR=0;
 int motionPin=D11;
 int pirState=LOW; 
 int moval=0;
+// LED Sine Wave
+float value , n ;
+float t;
+float y;
+float s;
+// Millis
+int startime;
 // Let Device OS manage the connection to the Particle Cloud
 SYSTEM_MODE(MANUAL);
 SYSTEM_THREAD(ENABLED);
+
 // Run the application and system concurrently in separate threads
 //SYSTEM_THREAD(ENABLED);
 // Show system, cloud connectivity, and application logs over USB
@@ -68,21 +78,34 @@ SYSTEM_THREAD(ENABLED);
 // setup() runs once, when the device is first turned on
 void setup() {
   // Put initialization like pinMode and begin functions here
-Serial.begin(9600);
-waitFor(Serial.isConnected,10000);
-display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-display.display();
-delay(2000);
-display.clearDisplay();
-display.setTextSize(1);
-display.setTextColor(WHITE);
+//Motion Sensor PIR
+pinMode(motionPin, INPUT);
 // SuperBright LED
 pinMode(REDLEDPIN, OUTPUT);
 pinMode(GREENLEDPIN, OUTPUT);
 pinMode(BLUELEDPIN, OUTPUT);
-pinMode(LASERPIN, OUTPUT);
+//pinMode(LASERPIN, OUTPUT); //Temporary Pin for Laser
 j = 100;
-pinMode(motionPin, INPUT_PULLUP);
+n = 0;
+//OLED Display functions
+Serial.begin(9600);
+waitFor(Serial.isConnected,10000);
+display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+display.display();
+delay(1000);
+// JP <3 IOT bitmap display
+display.clearDisplay();
+display.drawBitmap (0, 0, jpBitmap, 128, 64, WHITE);
+display.display();
+delay(2000);
+// Invert Display
+display.invertDisplay(true);
+delay(1000);
+display.invertDisplay(false);
+delay(1000);
+//Display Text
+display.setTextSize(2);
+display.setTextColor(WHITE);
 
 lightDelay=2000;
 Serial.begin(9600);
@@ -102,78 +125,79 @@ while(WiFi.connecting()) {
 Serial.printf(".");
 }
 Serial.printf("\n\n");
-lightTime=millis();
+lightTime= millis();
+//startime = millis(); //Millis time for PIR
 } 
-
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
-  // The core of your code will likely live here.
-//Motion PIR sensor
-display.clearDisplay();
-display.setCursor(0,0);
-display.printf("Turning on PIR# %i\n",MYPIR);
-display.display();
-delay(2000);
-if (blackButton.isClicked()) {
-pirOnOff= !pirOnOff;
-}
-if (redButton.isClicked()) {
-pirOnOff= !pirOnOff;
-}
-
+// The core of your code will likely live here.
+//Motion Sensor PIR----------------------------------------------------------------
 moval=digitalRead(motionPin);
 if (moval==HIGH){
-analogWrite(REDLEDPIN, HIGH);
-analogWrite(GREENLEDPIN, HIGH);
-analogWrite(BLUELEDPIN, HIGH);
-analogWrite(LASERPIN, HIGH);
+
+t = millis() / 3000.0;
+y = 128 * sin(2 * M_PI * 1/2.0 * t) + 128;
+analogWrite (REDLEDPIN, y);
+//analogWrite(REDLEDPIN, HIGH);
+y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
+analogWrite(GREENLEDPIN, y);
+//analogWrite(GREENLEDPIN, HIGH);
+y = 128 * sin(2 * M_PI * 1/7.0 * t) + 128;
+analogWrite(BLUELEDPIN, y);
+//analogWrite(BLUELEDPIN, HIGH);
+//millis(1000);
 delay (10);
 
 if (pirState==LOW){
 display.clearDisplay();
 display.setCursor(0,0);
-display.printf("Motion detected!\n");
+display.printf("Motion\nDetected!\n");
 display.display();
-delay(2000);
+delay(200);
 pirState = HIGH;
 }
 } else{
 analogWrite(REDLEDPIN, LOW);
 analogWrite(GREENLEDPIN, LOW);
 analogWrite(BLUELEDPIN, LOW);
-analogWrite(LASERPIN, LOW);
+
 if (pirState==HIGH){
 display.clearDisplay();
 display.setCursor(0,0);
-display.printf("Motion ended!\n");
+display.printf("Motion\nEnded!\n");
 display.display();
-delay(2000);
+delay(200);
 pirState = LOW;
 }
+// PIR Button with added Display code-------------------------------------------------
+pirOnOff = digitalRead(motionPin);
+if (blackButton.isClicked()) {
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("PIR On/Off\n");
+display.display();
+pirOnOff= !pirOnOff;
 }
-
-//SuperBright LED
-  // for (j=0; j <= 255; j++) {
-  //   analogWrite (REDLEDPIN, j);
-  //   delay(LEDDELAY); 
-  //  }
-  // for (j=255; j >= 0; j--) {
-  //   analogWrite (REDLEDPIN, j);
-  //   delay(LEDDELAY);
-  //  }
-
-//Button Functions
+}
+// Hue Button Functions with added Display code---------------------------------------
 if (grayButton.isClicked()) {
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Hue Light On/Off!\n");
+display.display(); //added display code
 hueOnOff=!hueOnOff;
 }
-//Encoder Button to cycle through colors
+//Encoder Button to cycle through colors with added Display code
 if (myEncBtn.isPressed()) {
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Set Bulb#%i\nColor %06i\n",BULB,HueRainbow[color%7]);
+display.display(); //added display code
 if (millis()-lightTime>lightDelay);
 colorNum=HueRainbow[color%7];
 color++;
 lightTime=millis();
 }
-
 //Encoder Funtions
 hueBright=myEnc.read();
 if(hueBright<=0){
@@ -184,32 +208,27 @@ if(hueBright>=255){
   hueBright=255;
   myEnc.write(255);
 }
-
-//Encoder button
+//Encoder button with added Display code
 if (hueBright != prevenc){
-Serial.printf("%i\n",hueBright);
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Setting\nBrightness\nValue %i\n",hueBright);
+display.display(); //added display code
 prevenc = hueBright;
 }
-//Hue
-display.clearDisplay();
-display.setCursor(0,0);
-display.printf("Setting color of bulb %i to color %06i\n",BULB,HueRainbow[color%7]);
-display.display();
-delay(2000);
+//delay(2000);
 setHue(BULB,hueOnOff,colorNum,hueBright,255);
 delay(100);
-
-//Wemo button
-display.clearDisplay();
-display.setCursor(0,0);
-display.printf("Turning on Wemo# %i\n",MYWEMO);
-display.display();
-delay(2000);
+//-----------------------------------------------------------------------------------
+//Wemo button with added Display code
+//delay(2000);
 if (redButton.isClicked()) {
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Wemo#%i On/Off!\n",MYWEMO);
+display.display(); //added display code
 wemoOnOff= !wemoOnOff;
 }
-if (redButton.isClicked()) {
-wemoOnOff= !wemoOnOff;
-}
+display.display(); //added display code
 }
 

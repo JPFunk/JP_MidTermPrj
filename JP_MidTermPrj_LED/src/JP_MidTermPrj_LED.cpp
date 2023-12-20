@@ -5,8 +5,10 @@
  * Date:12/16/2023
  */
 #include "Particle.h"
+#include "IoTClassroom_CNM.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
+#include <math.h>
 // OLED
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
@@ -17,9 +19,18 @@ const int BLUELEDPIN = D15;
 const int LASERPIN = D19;
 const int LEDDELAY = 20;
 int j;
+const int MYPIR =0;
 int motionPin=D11;
 int pirState = LOW; 
-int moval = 0; 
+int moval = 0;
+
+Button blackButton (D4);
+bool pirOnOff;
+// LED Sine Wave
+float value , n ;
+float t;
+float y;
+float s;
 SYSTEM_MODE(SEMI_AUTOMATIC);
 
 // setup() runs once, when the device is first turned on.
@@ -31,6 +42,7 @@ pinMode(GREENLEDPIN, OUTPUT);
 pinMode(BLUELEDPIN, OUTPUT);
 pinMode(LASERPIN, OUTPUT);
 j = 100;
+n = 0;
 
 //pinMode(motionPin, INPUT_PULLUP);
 Serial.begin(9600);
@@ -45,16 +57,30 @@ display.setTextColor(WHITE);
 
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
-  // The core of your code will likely live here.
- moval=digitalRead(motionPin);
- if (moval==HIGH){
-  analogWrite(REDLEDPIN, HIGH);
-  analogWrite(GREENLEDPIN, HIGH);
-  analogWrite(BLUELEDPIN, HIGH);
-  analogWrite(LASERPIN, HIGH);
-  delay (10);
+// The core of your code will likely live here.
+// pirOnOff = digitalRead(motionPin);
+// display.clearDisplay();
+// display.setCursor(0,0);
+//Motion Sonsor PIR
 
- if (pirState==LOW){
+moval=digitalRead(motionPin);
+if (moval==HIGH){
+
+//s=(0,1);
+//y = 128 * sin(2 * M_PI * s * t) + 128;
+// t = millis() / 3000.0;
+// y = 128 * sin(2 * M_PI * 1/2.0 * t) + 128;
+// analogWrite (REDLEDPIN, y);
+// y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
+// analogWrite(GREENLEDPIN, y);
+// y = 128 * sin(2 * M_PI * 1/7.0 * t) + 128;
+// analogWrite(BLUELEDPIN, y);
+analogWrite(REDLEDPIN, HIGH);
+analogWrite(GREENLEDPIN, HIGH);
+analogWrite(BLUELEDPIN, HIGH);
+delay (2000);
+
+if (pirState==LOW){
 display.clearDisplay();
 display.setCursor(0,0);
 display.printf("Motion detected!\n");
@@ -75,7 +101,22 @@ display.display();
  pirState = LOW;
  }
  }
+pirOnOff = digitalRead(motionPin);
+if (blackButton.isClicked()) {
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Turning on PIR!\n");
+display.display();
+pirOnOff= !pirOnOff;
+}
 
+if (blackButton.isClicked()) {
+display.clearDisplay();
+display.setCursor(0,0);
+display.printf("Turning off PIR!\n");
+display.display();
+pirOnOff= !pirOnOff;
+}
 //   int motionState = digitalRead(motionPin);
 // if(motionState == LOW) {
 //   analogWrite (REDLEDPIN, HIGH);
@@ -83,7 +124,7 @@ display.display();
 //   analogWrite (REDLEDPIN, LOW);
 //   }
   }
-  
+ //--------------------------------------------------------------------------------------------------------------- 
   // for (j=0; j <= 255; j++) {
   //   analogWrite (REDLEDPIN, j);
   //   delay(20);
