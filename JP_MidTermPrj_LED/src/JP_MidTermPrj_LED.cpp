@@ -152,3 +152,28 @@ pirOnOff= !pirOnOff;
   //   delay(20);
   //  }
 // }
+// Motion Sensor Functions for WEMO------------------------------------
+moval=digitalRead(motionPin);
+if (moval==HIGH){
+wemoWrite (MYWEMO, HIGH);
+
+if (pirState==LOW){
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("WEMO\n ON!\n");
+display.display(); //added display code
+delay(200);
+pirState = HIGH;
+}
+} else{
+wemoWrite(MYWEMO, LOW);
+
+if (pirState==HIGH){
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("WEMO\nOFF!\n");
+display.display(); //added display code
+delay(200);
+pirState = LOW;
+}
+}

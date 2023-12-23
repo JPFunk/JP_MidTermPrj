@@ -31,7 +31,6 @@ Button myEncBtn (D17);
 Button blackButton (D4);
 bool hueOnOff;
 bool wemoOnOff;
-bool ledOnOff;
 bool pirOnOff;
 //Encoder
 const int maxPos = 95;
@@ -47,9 +46,8 @@ const int REDBUTTONPIN=D18;
 int greenState,redState;
 bool buttonState;
 // Wemo
-const int MYWEMO=3;
+const int MYWEMO=0;
 //Super Bright LED
-int ledState=LOW; 
 const int REDLEDPIN=D13;
 const int GREENLEDPIN=D14;
 const int BLUELEDPIN=D15;
@@ -91,7 +89,7 @@ j = 100;
 n = 0;
 //OLED Display functions
 Serial.begin(9600);
-waitFor(Serial.isConnected,15000);
+waitFor(Serial.isConnected,10000);
 display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 display.display();
 delay(1000);
@@ -133,26 +131,42 @@ lightTime= millis();
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
 // The core of your code will likely live here.
-//Motion Sensor Functions---------------------------------------------------
+//Motion Sensor PIR----------------------------------------------------------------
 moval=digitalRead(motionPin);
 if (moval==HIGH){
-wemoWrite (MYWEMO, HIGH);// WEMO On FUnctions
+
+t = millis() / 3000.0;
+y = 128 * sin(2 * M_PI * 1/2.0 * t) + 128;
+analogWrite (REDLEDPIN, y);
+//analogWrite(REDLEDPIN, HIGH);
+y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
+analogWrite(GREENLEDPIN, y);
+//analogWrite(GREENLEDPIN, HIGH);
+y = 128 * sin(2 * M_PI * 1/7.0 * t) + 128;
+analogWrite(BLUELEDPIN, y);
+//analogWrite(BLUELEDPIN, HIGH);
+//millis(1000);
+delay (10);
+
 if (pirState==LOW){
 display.clearDisplay();
 display.setCursor(0,0);
-display.printf("Motion\nWEMO ON!\n"); //WEMO Display Functions
+display.printf("Motion\nDetected!\n");
 display.display();
-//delay(200);
+delay(200);
 pirState = HIGH;
 }
 } else{
-wemoWrite(MYWEMO, LOW); //WEMO Functions
+analogWrite(REDLEDPIN, LOW);
+analogWrite(GREENLEDPIN, LOW);
+analogWrite(BLUELEDPIN, LOW);
+
 if (pirState==HIGH){
 display.clearDisplay();
 display.setCursor(0,0);
-display.printf("Motion\nWEMO OFF!\n"); //WEMO Display Functions
+display.printf("Motion\nEnded!\n");
 display.display();
-//delay(200);
+delay(200);
 pirState = LOW;
 }
 // PIR Button with added Display code-------------------------------------------------
@@ -163,8 +177,8 @@ display.setCursor(0,0);
 display.printf("PIR On/Off\n");
 display.display();
 pirOnOff= !pirOnOff;
- }
- }
+}
+}
 // Hue Button Functions with added Display code---------------------------------------
 if (grayButton.isClicked()) {
 display.clearDisplay(); //added display code
@@ -172,7 +186,7 @@ display.setCursor(0,0); //added display code
 display.printf("Hue Light On/Off!\n");
 display.display(); //added display code
 hueOnOff=!hueOnOff;
- }
+}
 //Encoder Button to cycle through colors with added Display code
 if (myEncBtn.isPressed()) {
 display.clearDisplay(); //added display code
@@ -183,7 +197,7 @@ if (millis()-lightTime>lightDelay);
 colorNum=HueRainbow[color%7];
 color++;
 lightTime=millis();
- }
+}
 //Encoder Funtions
 hueBright=myEnc.read();
 if(hueBright<=0){
@@ -208,20 +222,12 @@ delay(100);
 //-----------------------------------------------------------------------------------
 //Wemo button with added Display code
 //delay(2000);
-
-// if (redButton.isClicked()) {
-// display.clearDisplay(); //added display code
-// display.setCursor(0,0); //added display code
-// display.printf("Wemo#%i Off!\n",MYWEMO);
-// display.display(); //added display code
-// wemoOnOff= !wemoOnOff;
-// }
-// if (wemoOnOff) {
-// wemoWrite (MYWEMO, HIGH);
-//   Serial.printf("Turning on Wemo# %i \n", MYWEMO);
-// }
-// else {
-// wemoWrite(MYWEMO, LOW);
-//   Serial.printf("Turning off Wemo# %i \n", MYWEMO);
-//  }
+if (redButton.isClicked()) {
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Wemo#%i On/Off!\n",MYWEMO);
+display.display(); //added display code
+wemoOnOff= !wemoOnOff;
+}
+display.display(); //added display code
 }
