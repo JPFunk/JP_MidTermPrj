@@ -15,7 +15,7 @@
 #include "Encoder.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
-#include <math.h>
+#include "math.h"
 #include "JPBitmap.h"
 // OLED
 const int OLED_RESET=-1;
@@ -29,15 +29,19 @@ long unsigned int lightTime;
 int lightDelay;
 // Button
 Button grayButton (D3);
-Button redButton (D5);
+//Button redButton (D5);
+const int redButton=D5;
 Button myEncBtn (D17);
 Button blackButton (D4);
+//Mode Switch
+const int modeSwitch= D6;
+bool modeOnOff;
+
+// Booleans for On Off
 bool hueOnOff;
 bool wemoOnOff;
 bool neoOnOff;
 bool movalOnOff;
-bool pirOnOff;
-
 // Special Button
 int buttonPin;
 int prevButtonState;
@@ -104,6 +108,8 @@ colorCount=0;
 pixelAddr=0;
 random (0,4); // LED assignment 0,1,2,3,4
 rainbow[0,1,2,3,4];
+// Mode Switch
+pinMode(modeSwitch, INPUT);
 //Motion Sensor PIR
 pinMode(motionPin, INPUT);
 //NeoPixel
@@ -156,54 +162,50 @@ lightTime= millis();
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
 // The core of your code will likely live here.
+// Switch Code for OnOff functions for Wemo RedButton and Motion Sensor---------
+// if (modeSwitch==HIGH) {
+// display.clearDisplay(); //added display code
+// display.setCursor(0,0); //added display code
+// display.printf("switch ON");
+// display.display(); //added display code
+// switchOnOff= !switchOnOff;
+// }
+modeOnOff = digitalRead(modeSwitch);
+if (modeOnOff) {
+digitalWrite(redButton, HIGH);
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Red Botton ON");
+display.display(); //added display code
+  Serial.printf("Turning on Red Button for WEMO");
+}
+else {
+digitalWrite(motionPin, HIGH);
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Motion Sensor ON");
+display.display(); //added display code
+  Serial.printf("Turning on Motion Sensor");
+ }
 //Wemo button with added Display code-----------------------------------------
 // delay(2000);
 
-// if (redButton.isClicked()) {
-// display.clearDisplay(); //added display code
-// display.setCursor(0,0); //added display code
-// display.printf("Wemo#%i Off!\n",MYWEMO);
-// display.display(); //added display code
-// wemoOnOff= !wemoOnOff;
-// }
-// if (wemoOnOff) {
-// wemoWrite (MYWEMO, HIGH);
-//   Serial.printf("Turning on Wemo# %i \n", MYWEMO);
-// }
-// else {
-// wemoWrite(MYWEMO, LOW);
-//   Serial.printf("Turning off Wemo# %i \n", MYWEMO);
-//  }
+if (redButton.isClicked()) {
+display.clearDisplay(); //added display code
+display.setCursor(0,0); //added display code
+display.printf("Wemo#%i Off!\n",MYWEMO);
+display.display(); //added display code
+wemoOnOff= !wemoOnOff;
+}
+if (wemoOnOff) {
+wemoWrite (MYWEMO, HIGH);
+  Serial.printf("Turning on Wemo# %i \n", MYWEMO);
+}
+else {
+wemoWrite(MYWEMO, LOW);
+  Serial.printf("Turning off Wemo# %i \n", MYWEMO);
+ }
 
-//Motion Button On Off---------------------------------------------------
-// blackButton(buttonPin, pullUp=false) {
-// buttonPin = buttonPin;
-// pullUp = pullUp;
-
-// if(pullUp) {
-// pinMode(_buttonPin,INPUT_PULLUP);
-//  }
-//  else {
-//  pinMode(_buttonPin,INPUT_PULLDOWN);       
-//   }
-// }
- //-------------------------------------------------------------------------   
-// if (blackButton.isClicked()) {
-// display.clearDisplay();
-// display.setCursor(0,0);
-// display.printf("PIR On\n");
-// display.display();
-// //neoOnOff = digitalRead(D2);
-// pirOnOff = !pirOnOff;
-// }
-// if (pirOnOff) {
-// wemoWrite (MYWEMO, HIGH);
-//   Serial.printf("Turning on PIR");
-// }
-// else {
-// wemoWrite(MYWEMO, LOW);
-//   Serial.printf("Turning off PIR");
-//  }
 //Motion Sensor Functions-----------------------------------------------------
 moval=digitalRead(motionPin);
 
@@ -268,8 +270,8 @@ prevenc = hueBright;
 //delay(2000);
 setHue(BULB,hueOnOff,colorNum,hueBright,255);
 delay(100);
-// NeoPixel Code---------------------------------------------------------------------
 
+// NeoPixel Code with Black Button---------------------------------------------------------------------
 if (blackButton.isClicked()) {
 display.clearDisplay();
 display.setCursor(0,0);
@@ -312,22 +314,4 @@ delay(10);
 
 
 //-----------------------------------------------------------------------------------
-//Wemo button with added Display code
-//delay(2000);
 
-// if (redButton.isClicked()) {
-// display.clearDisplay(); //added display code
-// display.setCursor(0,0); //added display code
-// display.printf("Wemo#%i Off!\n",MYWEMO);
-// display.display(); //added display code
-// wemoOnOff= !wemoOnOff;
-// }
-// if (wemoOnOff) {
-// wemoWrite (MYWEMO, HIGH);
-//   Serial.printf("Turning on Wemo# %i \n", MYWEMO);
-// }
-// else {
-// wemoWrite(MYWEMO, LOW);
-//   Serial.printf("Turning off Wemo# %i \n", MYWEMO);
-//  }
-//}
