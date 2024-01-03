@@ -1,110 +1,81 @@
-{\rtf1\ansi\deff3\adeflang1025
-{\fonttbl{\f0\froman\fprq2\fcharset0 Times New Roman;}{\f1\froman\fprq2\fcharset2 Symbol;}{\f2\fswiss\fprq2\fcharset0 Arial;}{\f3\froman\fprq2\fcharset0 Liberation Serif{\*\falt Times New Roman};}{\f4\fswiss\fprq2\fcharset0 Liberation Sans{\*\falt Arial};}{\f5\fnil\fprq2\fcharset0 Microsoft YaHei;}{\f6\fnil\fprq2\fcharset0 Arial;}{\f7\fswiss\fprq0\fcharset128 Arial;}}
-{\colortbl;\red0\green0\blue0;\red0\green0\blue255;\red0\green255\blue255;\red0\green255\blue0;\red255\green0\blue255;\red255\green0\blue0;\red255\green255\blue0;\red255\green255\blue255;\red0\green0\blue128;\red0\green128\blue128;\red0\green128\blue0;\red128\green0\blue128;\red128\green0\blue0;\red128\green128\blue0;\red128\green128\blue128;\red192\green192\blue192;}
-{\stylesheet{\s0\snext0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1 Normal;}
-{\s15\sbasedon0\snext16\dbch\af5\dbch\af6\afs28\sb240\sa120\keepn\loch\f4\fs28 Heading;}
-{\s16\sbasedon0\snext16\sl276\slmult1\sb0\sa140 Text Body;}
-{\s17\sbasedon16\snext17\dbch\af7\sl276\slmult1\sb0\sa140 List;}
-{\s18\sbasedon0\snext18\dbch\af7\afs24\ai\sb120\sa120\noline\fs24\i Caption;}
-{\s19\sbasedon0\snext19\dbch\af7\noline Index;}
-}{\*\generator LibreOffice/6.3.3.2$Windows_X86_64 LibreOffice_project/a64200df03143b798afd1ec74a12ab50359878ed}{\info{\creatim\yr0\mo0\dy0\hr0\min0}{\revtim\yr2023\mo12\dy17\hr1\min17}{\printim\yr0\mo0\dy0\hr0\min0}}{\*\userprops}\deftab709
-\viewscale100
-{\*\pgdsctbl
-{\pgdsc0\pgdscuse451\pgwsxn12240\pghsxn15840\marglsxn1134\margrsxn1134\margtsxn1134\margbsxn1134\pgdscnxt0 Default Style;}}
-\formshade\paperh15840\paperw12240\margl1134\margr1134\margt1134\margb1134\sectd\sbknone\sectunlocked1\pgndec\pgwsxn12240\pghsxn15840\marglsxn1134\margrsxn1134\margtsxn1134\margbsxn1134\ftnbj\ftnstart1\ftnrstcont\ftnnar\aenddoc\aftnrstcont\aftnstart1\aftnnrlc
-{\*\ftnsep\chftnsep}\pgndec\pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-/*}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
- }{\loch
-* PIR sensor tester}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
- }{\loch
-*/}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
- }
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-int ledPin = 13;                // choose the pin for the LED}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-int inputPin = 2;               // choose the input pin (for PIR sensor)}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-int pirState = LOW;             // we start, assuming no motion detected}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-int val = 0;                    // variable for reading the pin status}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
- }
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-void setup() \{}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-pinMode(ledPin, OUTPUT);      // declare LED as output}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-pinMode(inputPin, INPUT);     // declare sensor as input}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
- }
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-Serial.begin(9600);}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-\}}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
- }
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-void loop()\{}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-val = digitalRead(inputPin);  // read input value}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-if (val == HIGH) \{            // check if the input is HIGH}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-    }{\loch
-digitalWrite(ledPin, HIGH);  // turn LED ON}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-    }{\loch
-if (pirState == LOW) \{}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-// we have just turned on}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-Serial.println("Motion detected!");}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-// We only want to print on the output change, not state}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-pirState = HIGH;}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-    }{\loch
-\}}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-\} else \{}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-    }{\loch
-digitalWrite(ledPin, LOW); // turn LED OFF}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-    }{\loch
-if (pirState == HIGH)\{}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-// we have just turned of}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-Serial.println("Motion ended!");}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-// We only want to print on the output change, not state}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-      }{\loch
-pirState = LOW;}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-    }{\loch
-\}}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{
-  }{\loch
-\}}
-\par \pard\plain \s0\hich\af3\dbch\af8\langfe2052\dbch\af6\afs24\alang1081\nowidctlpar\hyphpar0\ltrpar\cf0\loch\f3\fs24\lang1033\kerning1\ql\ltrpar{\loch
-\}}
-\par }
+
+/*
+ * PIR sensor tester
+ */
+ 
+int ledPin = 13;                // choose the pin for the LED
+int inputPin = 2;               // choose the input pin (for PIR sensor)
+int pirState = LOW;             // we start, assuming no motion detected
+int val = 0;                    // variable for reading the pin status
+ 
+void setup() {
+  pinMode(ledPin, OUTPUT);      // declare LED as output
+  pinMode(inputPin, INPUT);     // declare sensor as input
+ 
+  Serial.begin(9600);
+}
+ 
+void loop(){
+  val = digitalRead(inputPin);  // read input value
+  if (val == HIGH) {            // check if the input is HIGH
+    digitalWrite(ledPin, HIGH);  // turn LED ON
+    if (pirState == LOW) {
+      // we have just turned on
+      Serial.println("Motion detected!");
+      // We only want to print on the output change, not state
+      pirState = HIGH;
+    }
+  } else {
+    digitalWrite(ledPin, LOW); // turn LED OFF
+    if (pirState == HIGH){
+      // we have just turned of
+      Serial.println("Motion ended!");
+      // We only want to print on the output change, not state
+      pirState = LOW;
+    }
+  }
+}
+--------------------------------------------------------------------------------------------------------------------------------
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+
+#define PIN        6
+#define NUMPIXELS 12
+#define ONSWITCH 4
+
+
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+bool switched_on = false;
+
+void setup() {
+  pinMode(ONSWITCH, INPUT_PULLUP);
+
+  pixels.begin();
+  button_press = millis();
+
+}
+void loop() {
+  //read button "on" and flip the switched_on variable
+  if (digitalRead(ONSWITCH) == LOW) {
+
+    unsigned long buttonpress_start = millis();
+    while (digitalRead(ONSWITCH) == LOW); //wait how long the button is pressed
+
+    if (millis() - buttonpress_start > 250) { //Button pressed for longer than 250ms
+      switched_on = !switched_on; //Invert switched_on
+    }
+  }
+
+  if (switched_on == true) {
+
+    for (int i = 0; i < NUMPIXELS; i++) {
+      pixels.setPixelColor(i, pixels.Color(75, 0, 130));
+      pixels.show();
+    } else {
+
+      pixels.clear();
+    }
+
+  }
