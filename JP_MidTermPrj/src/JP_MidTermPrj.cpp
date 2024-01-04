@@ -17,6 +17,7 @@
 #include "Adafruit_SSD1306.h"
 #include "math.h"
 #include "JPBitmap.h"
+#include "PyramidBitmap.h"
 // OLED
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
@@ -29,8 +30,7 @@ long unsigned int lightTime;
 int lightDelay;
 // Button
 Button grayButton (D3);
-//Button redButton (D5);
-const int redButton=D5;
+Button redButton (D5);
 Button myEncBtn (D17);
 Button blackButton (D4);
 //Mode Switch
@@ -125,7 +125,8 @@ display.display();
 delay(1000);
 // JP <3 IOT bitmap display
 display.clearDisplay();
-display.drawBitmap (0, 0, jpBitmap, 128, 64, WHITE);
+//display.drawBitmap (0, 0, jpBitmap, 128, 64, WHITE);
+display.drawBitmap (0, 0, pyramidBitmap, 128, 64, WHITE);
 display.display();
 delay(2000);
 // Invert Display
