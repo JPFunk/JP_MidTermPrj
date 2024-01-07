@@ -1,7 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 12/15/2023
+ * Date: 01/07/2024
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -17,7 +17,7 @@
 #include "Adafruit_SSD1306.h"
 #include "math.h"
 //#include "JPBitmap.h" old custom BMP
-#include "PyramidBitmap.h"
+#include "PyramidBitmap.h" // Custom Pyramid BMP
 // OLED
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
@@ -28,23 +28,20 @@ int colorNum;
 //Millis time for lights
 long unsigned int lightTime;
 int lightDelay;
-
 IoTTimer wemoTimer;
 // Buttons
-Button grayButton (D3);
-Button redButton (D5);
-Button myEncBtn (D17);
-Button blackButton (D4);
+Button grayButton (D3); // Hue Lights
+Button redButton (D5); // Wemo
+Button myEncBtn (D17); // Hue Colors
+Button blackButton (D4); // Neopixels
 //Mode Switch
-const int modeSwitch= D6;
-
+const int modeSwitch= D6; // Switches between Motion Sensor and Red Button OnOff for WEMO's
 // Booleans for On Off
 bool hueOnOff;
 bool wemoOnOff;
 bool neoOnOff;
 bool movalOnOff;
 bool modeOnOff;
-
 // Special Button
 int buttonPin;
 int prevButtonState;
@@ -77,8 +74,8 @@ int x;
 int temp;
 int i;
 int j;
-int cycleCount;
-
+int k;
+int modeSeq;
 //MotionSensor
 const int MYPIR=0;
 int motionPin=D11;
@@ -89,13 +86,11 @@ int moval;
 // float t;
 // float y;
 // float s;
-
-// Millis
+// Millis--------------------------
 int startime;
 // Let Device OS manage the connection to the Particle Cloud
 SYSTEM_MODE(MANUAL);
 SYSTEM_THREAD(ENABLED);
-
 // Run the application and system concurrently in separate threads
 //SYSTEM_THREAD(ENABLED);
 // Show system, cloud connectivity, and application logs over USB
@@ -113,24 +108,20 @@ colorCount=0;
 pixelAddr=0;
 random (0,4); // LED assignment 0,1,2,3,4
 rainbow[0,1,2,3,4];
-
 // Mode Switch----------------------------
 pinMode(modeSwitch, INPUT);
 //Motion Sensor PIR
 pinMode(motionPin, INPUT);
-
 //NeoPixel--------------------------------
 pixel.begin ();
 pixel.setBrightness (10); // bri is a value 0 - 255
 pixel.show (); // initialize all off
-
 //OLED Display functions------------------
 Serial.begin(9600);
 waitFor(Serial.isConnected,15000);
 display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 display.display();
 delay(1000);
-
 // Pyramid bitmap display-------------------------------
 display.clearDisplay();
 //display.drawBitmap (0, 0, jpBitmap, 128, 64, WHITE);
@@ -145,7 +136,6 @@ delay(1000);
 //Display Text
 display.setTextSize(2);
 display.setTextColor(WHITE);
-
 // Hue Light--------------------------------------------
 lightDelay=2000;
 Serial.begin(9600);
@@ -154,7 +144,7 @@ BULB =1;
 //Encoder----------------------------------------------
 pinMode(GREENBUTTONPIN, OUTPUT);
 pinMode(REDBUTTONPIN, OUTPUT);
-
+// WIfi-------------------------------------------------
 WiFi.on();
 WiFi.clearCredentials(); // prevent from connecting to DDCIOT
 WiFi.setCredentials("IoTNetwork");
@@ -171,7 +161,6 @@ lightTime= millis();
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
 // The core of your code will likely live here.
-
 // Switch Code OnOff functions for Wemo RedButton and Motion Sensor--------------
 modeOnOff = digitalRead(modeSwitch);
 moval=digitalRead(motionPin);
@@ -182,16 +171,16 @@ if (modeOnOff) {
 
  if (moval==LOW){
     wemoWrite(MYWEMO, LOW); //WEMO Functions
-    display.clearDisplay();
+    display.clearDisplay(); //added OLED display code
     display.setCursor(0,0);
     display.printf("Motion\nWEMO Off!\n"); //WEMO Display Functions
     display.display();
     //delay(200);
     //pirState = HIGH;
  //}
- } else {
+  } else {
     wemoWrite (MYWEMO, HIGH);// WEMO On FUnctions
-    display.clearDisplay();
+    display.clearDisplay();  //added OLED display code
     display.setCursor(0,0);
     display.printf("Motion\nWEMO On!\n"); //WEMO Display Functions
     display.display();
@@ -204,57 +193,57 @@ if (modeOnOff) {
 } else {
 //Wemo Red button with added Display code-----------------------------------------
 //delay(2000);
-if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
+ if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
 //if (redButton.isClicked()) {
-  display.clearDisplay(); //added display code
-  display.setCursor(0,0); //added display code
-  display.printf("Wemo#%i\n Manual\n Mode\n",MYWEMO);
-  display.display(); //added display code
+  display.clearDisplay(); //added OLED display code
+  display.setCursor(0,0); 
+  display.printf("Wemo#%i\nManual\nMode On\n",MYWEMO);
+  display.display();
   wemoOnOff= !wemoOnOff;
    }
-  if (wemoOnOff) {
+ if (wemoOnOff) {
   wemoWrite (MYWEMO, HIGH);
   //Serial.printf("Turning on Wemo# %i \n", MYWEMO);
-  } else {
+   } else {
   wemoWrite(MYWEMO, LOW);
   //Serial.printf("Turning off Wemo# %i \n", MYWEMO);
+   }
   }
- }
 // Hue Button Functions with added Display code---------------------------------------
-if (grayButton.isClicked()) {
-  display.clearDisplay(); //added display code
-  display.setCursor(0,0); //added display code
+ if (grayButton.isClicked()) {
+  display.clearDisplay(); //added OLED display code ---------------------
+  display.setCursor(0,0);
   display.printf("Hue Light On/Off!\n");
-  display.display(); //added display code
+  display.display();
   hueOnOff=!hueOnOff;
- }
+  }
 //Encoder Button to cycle through colors with added Display code
-if (myEncBtn.isPressed()) {
-  display.clearDisplay(); //added display code
-  display.setCursor(0,0); //added display code
+ if (myEncBtn.isPressed()) {
+  display.clearDisplay(); //added OLED display code ---------------------
+  display.setCursor(0,0);
   display.printf("Set Bulb#%i\nColor %06i\n",BULB,HueRainbow[color%7]);
-  display.display(); //added display code
-if (millis()-lightTime>lightDelay) {
+  display.display();
+ if (millis()-lightTime>lightDelay) {
   colorNum=HueRainbow[color%7];
   color++;
   lightTime=millis();
  }
 //Encoder Funtions
   hueBright=myEnc.read();
-if(hueBright<=0){
+ if(hueBright<=0){
   hueBright=0;
   myEnc.write(0);
  }
-if(hueBright>=255){
+ if(hueBright>=255){
   hueBright=255;
   myEnc.write(255);
  }
 //Encoder button with added Display code
-if (hueBright != prevenc){
-  display.clearDisplay(); //added display code
-  display.setCursor(0,0); //added display code
+ if (hueBright != prevenc){
+  display.clearDisplay(); //added OLED display code------------------
+  display.setCursor(0,0);
   display.printf("Setting\nBrightness\nValue %i\n",hueBright);
-  display.display(); //added display code
+  display.display();
   prevenc = hueBright;
  }
 //delay(2000);
@@ -262,29 +251,40 @@ if (hueBright != prevenc){
 setHue(BULB,hueOnOff,colorNum,hueBright,255);
 delay(100);
 
-// NeoPixel Code with Black Button---------------------------------------------------------------------
-if (blackButton.isClicked()) {
-  display.clearDisplay();
-  display.setCursor(0,0);
-  display.printf("NEOPIX\nOn\n");
-  display.display();
-//neoOnOff = digitalRead(D2);
-//neoOnOff = !neoOnOff;
-cycleCount++;
-if (cycleCount=1) {
+// NeoPixel Auto Cycle Code----------------------------------------
  for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
  pixel.setPixelColor (pixelAddr, rainbow[i]);
-
  delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
  }
   pixel.show (); // nothing changes until show ()
   i++;
   if (i>6){i=0;}
-  delay(500);
+  delay(100);
+  
+// NeoPixel Code with Black Button---------------------------------------------------------
+if (blackButton.isClicked()) {
+  display.clearDisplay(); //added OLED display code -----------------
+  display.setCursor(0,0);
+  display.printf("NEOPIX\nOn\n");
+  display.display();
+ //modeSeq = digitalRead(D2);
+ //neoOnOff = !neoOnOff;
+
+  modeSeq++;  // New BlackButton Code with EJ
+if (modeSeq=1) {  // New BlackButton Code with EJ
+  for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
+  pixel.setPixelColor (pixelAddr, rainbow[i]);
+
+  delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
+ }
+  pixel.show (); // nothing changes until show ()
+  i++;
+  if (i>6){i=0;}
+  delay(100);
   }
 
 //   // End of NeoPixel Rainbow Code-------------------------
-//   if (cycleCount=2) {
+//   if (modeSeq=2) {
 //   //pixel.clear (); // Clear Pixels----------------
 //   for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
 //   x=random(7);
@@ -293,7 +293,7 @@ if (cycleCount=1) {
 //   pixel.show ();
 //  }
 //     delay(200);
-//     for (i=0; i<PIXELCOUNT; i++) {
+//     for (k=0; i<PIXELCOUNT; k++) {
 //     }
 //     for (pixelAddr=0; pixelAddr < PIXELCOUNT; pixelAddr++) {
 //     pixel.setPixelColor(pixelAddr, rainbow[mySeq[pixelAddr]]);
@@ -302,7 +302,8 @@ if (cycleCount=1) {
 //    }
 //   delay(10);
 //   } 
-//   if (cycleCount>2){cycleCount=0;}
+//   if (modeSeq>2){modeSeq=0;}
+
+  }
  }
-}
 
