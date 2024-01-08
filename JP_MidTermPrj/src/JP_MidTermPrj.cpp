@@ -267,11 +267,10 @@ if (blackButton.isClicked()) {
   display.setCursor(0,0);
   display.printf("NEOPIX\nOn\n");
   display.display();
- //modeSeq = digitalRead(D2);
- //neoOnOff = !neoOnOff;
 
   modeSeq++;  // New BlackButton Code with EJ
-if (modeSeq=1) {  // New BlackButton Code with EJ
+ if (modeSeq=1) {  // New BlackButton Code with EJ
+ 
   for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
   pixel.setPixelColor (pixelAddr, rainbow[i]);
 
