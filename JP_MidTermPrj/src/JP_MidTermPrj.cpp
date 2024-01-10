@@ -252,57 +252,52 @@ setHue(BULB,hueOnOff,colorNum,hueBright,255);
 delay(100);
 
 // NeoPixel Auto Cycle Code----------------------------------------
- for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
- pixel.setPixelColor (pixelAddr, rainbow[i]);
- delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
- }
-  pixel.show (); // nothing changes until show ()
-  i++;
-  if (i>6){i=0;}
-  delay(100);
+//  for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
+//  pixel.setPixelColor (pixelAddr, rainbow[i]);
+//  delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
+//  }
+//   pixel.show (); // nothing changes until show ()
+//   i++;
+//   if (i>6){i=0;}
+//   delay(100);
   
 // NeoPixel Code with Black Button---------------------------------------------------------
 if (blackButton.isClicked()) {
+  modeSeq++;  // New BlackButton Code with EJ
+}
+  if (modeSeq%2==0) {  // New BlackButton Code with EJ
   display.clearDisplay(); //added OLED display code -----------------
   display.setCursor(0,0);
-  display.printf("NEOPIX\nOn\n");
+  display.printf("NEOPIX\nRainbow\nOn\n");
   display.display();
-
-  modeSeq++;  // New BlackButton Code with EJ
- if (modeSeq=1) {  // New BlackButton Code with EJ
- 
+// NeoPixel Rainbow functions
   for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
   pixel.setPixelColor (pixelAddr, rainbow[i]);
-
   delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
- }
+  }
   pixel.show (); // nothing changes until show ()
   i++;
   if (i>6){i=0;}
   delay(100);
   }
+   // End of NeoPixel Rainbow Code-------------------------
 
-//   // End of NeoPixel Rainbow Code-------------------------
-//   if (modeSeq=2) {
-//   //pixel.clear (); // Clear Pixels----------------
-//   for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
-//   x=random(7);
-//   mySeq[pixelAddr]=x;
-//   pixel.setPixelColor(pixelAddr, rainbow[mySeq[pixelAddr]]);
-//   pixel.show ();
-//  }
-//     delay(200);
-//     for (k=0; i<PIXELCOUNT; k++) {
-//     }
-//     for (pixelAddr=0; pixelAddr < PIXELCOUNT; pixelAddr++) {
-//     pixel.setPixelColor(pixelAddr, rainbow[mySeq[pixelAddr]]);
-//     pixel.show ();
-//  //pixel.clear ();
-//    }
-//   delay(10);
-//   } 
-//   if (modeSeq>2){modeSeq=0;}
-
+  if (modeSeq%2==1) {
+  //pixel.clear (); // Clear Pixels----------------
+  display.clearDisplay(); //added OLED display code -----------------
+  display.setCursor(0,0);
+  display.printf("NEOPIX\nRandom\nOn\n");
+  display.display();
+  // NeoPixel Random Color Functions
+  for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
+  x=random(7);
+  mySeq[pixelAddr]=x;
+  pixel.setPixelColor(pixelAddr, rainbow[mySeq[pixelAddr]]);
+  pixel.show ();
   }
- }
+    delay(200);
+  } 
+  //if (modeSeq>2){modeSeq=0;}
+}
+ 
 
