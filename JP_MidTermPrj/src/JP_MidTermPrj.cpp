@@ -18,6 +18,10 @@
 #include "math.h"
 //#include "JPBitmap.h" old custom BMP
 #include "PyramidBitmap.h" // Custom Pyramid BMP
+// PhotoDiode
+const int LEDPIN = D7;
+const int PHOTODIODE = D10; //A1 D10
+int val;
 // OLED
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
@@ -114,7 +118,7 @@ pinMode(modeSwitch, INPUT);
 pinMode(motionPin, INPUT);
 //NeoPixel--------------------------------
 pixel.begin ();
-pixel.setBrightness (10); // bri is a value 0 - 255
+pixel.setBrightness (40); // bri is a value 0 - 255
 pixel.show (); // initialize all off
 //OLED Display functions------------------
 Serial.begin(9600);
@@ -161,6 +165,15 @@ lightTime= millis();
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
 // The core of your code will likely live here.
+  // PhotoDiode LED-------------------------
+  val = analogRead(D10);
+  Serial.printf("photodiode %i \n",val);
+  if (val < 40){ 
+  digitalWrite(LEDPIN, HIGH);
+  }
+  else {
+  digitalWrite (LEDPIN, LOW);
+  }
 // Switch Code OnOff functions for Wemo RedButton and Motion Sensor--------------
 modeOnOff = digitalRead(modeSwitch);
 moval=digitalRead(motionPin);
@@ -265,7 +278,7 @@ delay(100);
 if (blackButton.isClicked()) {
   modeSeq++;  // New BlackButton Code with EJ
 }
-  if (modeSeq%2==0) {  // New BlackButton Code with EJ
+  if (modeSeq%4==1) {  // New BlackButton Code with EJ
   display.clearDisplay(); //added OLED display code -----------------
   display.setCursor(0,0);
   display.printf("NEOPIX\nRainbow\nOn\n");
@@ -282,7 +295,7 @@ if (blackButton.isClicked()) {
   }
    // End of NeoPixel Rainbow Code-------------------------
 
-  if (modeSeq%2==1) {
+  if (modeSeq%4==2) {
   //pixel.clear (); // Clear Pixels----------------
   display.clearDisplay(); //added OLED display code -----------------
   display.setCursor(0,0);
@@ -298,6 +311,23 @@ if (blackButton.isClicked()) {
     delay(200);
   } 
   //if (modeSeq>2){modeSeq=0;}
+    if (modeSeq%4==3) {
+  //pixel.clear (); // Clear Pixels----------------
+  display.clearDisplay(); //added OLED display code -----------------
+  display.setCursor(0,0);
+  display.printf("NEOPIX\nColor\nOn\n");
+  display.display();
+  // NeoPixel Random Color Functions
+  for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
+  pixel.setPixelColor (pixelAddr, rainbow[i]);
+  delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
+  }
+  pixel.show (); // nothing changes until show ()
+  i++;
+  if (i>6){i=0;}
+  delay(100);
+  pixel.clear(); //Pixel Clear to clear Color at end of Loop
+  }
 }
  
 
