@@ -1,7 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 01/11/2024
+ * Date: 01/12/2024
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -22,6 +22,11 @@
 const int LEDPIN = A2;
 const int PHOTODIODE = A1;
 int val;
+// RGB LED Sine Wave---------Not Using-------------------------------
+float value , n ;
+float t;
+float y;
+float s;
 // OLED
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
@@ -83,13 +88,8 @@ int modeSeq;
 //MotionSensor
 const int MYPIR=0;
 int motionPin=D11;
-int pirState=LOW; 
-int moval;
-// RGB LED Sine Wave---------Not Using-------------------------------
-float value , n ;
-float t;
-float y;
-float s;
+int pirState=LOW; //   t = millis() / 1000.0;
+int moval;//   y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
 // Millis--------------------------
 int startime;
 // Let Device OS manage the connection to the Particle Cloud
@@ -103,6 +103,22 @@ SYSTEM_THREAD(ENABLED);
 // setup() runs once, when the device is first turned on
 void setup() {
 // Put initialization like pinMode and begin functions here
+// WIfi-------------------------------------------------
+WiFi.on();
+WiFi.clearCredentials(); // prevent from connecting to DDCIOT
+WiFi.setCredentials("IoTNetwork");
+// If network requires a password
+// setCredentials ( const "" NetworkName ", " Password ");
+WiFi.connect();
+while(WiFi.connecting()) {
+Serial.printf(".");
+}
+Serial.printf("\n\n");
+lightTime= millis();
+// Photodiode and LED Sine Wave set up----------------------
+pinMode(LEDPIN, OUTPUT);
+pinMode(PHOTODIODE, INPUT);
+n = 0;
 // NeoPixel Set Up----------------------------------------------------------------
 pixel.begin ();
 pixel.setBrightness (64); // bri is a value 0 - 255
@@ -114,13 +130,13 @@ random (0,4); // LED assignment 0,1,2,3,4
 rainbow[0,1,2,3,4];
 // Mode Switch----------------------------
 pinMode(modeSwitch, INPUT);
-//Motion Sensor PIR
+// Motion Sensor PIR
 pinMode(motionPin, INPUT);
-//NeoPixel--------------------------------
+// NeoPixel--------------------------------
 pixel.begin ();
 pixel.setBrightness (40); // bri is a value 0 - 255
 pixel.show (); // initialize all off
-//OLED Display functions------------------
+// OLED Display functions------------------
 Serial.begin(9600);
 waitFor(Serial.isConnected,15000);
 display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -136,7 +152,7 @@ display.invertDisplay(true);
 delay(1000);
 display.invertDisplay(false);
 delay(1000);
-//Display Text
+// Display Text
 display.setTextSize(2);
 display.setTextColor(WHITE);
 // Hue Light--------------------------------------------
@@ -144,21 +160,9 @@ lightDelay=2000;
 Serial.begin(9600);
 waitFor(Serial.isConnected,15000);
 BULB =1;
-//Encoder----------------------------------------------
+// Encoder----------------------------------------------
 pinMode(GREENBUTTONPIN, OUTPUT);
 pinMode(REDBUTTONPIN, OUTPUT);
-// WIfi-------------------------------------------------
-WiFi.on();
-WiFi.clearCredentials(); // prevent from connecting to DDCIOT
-WiFi.setCredentials("IoTNetwork");
-// If network requires a password
-// setCredentials ( const "" NetworkName ", " Password ");
-WiFi.connect();
-while(WiFi.connecting()) {
-Serial.printf(".");
-}
-Serial.printf("\n\n");
-lightTime= millis();
 }
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
@@ -169,6 +173,8 @@ void loop() {
   val = analogRead(A1);
   Serial.printf("photodiode %i \n",val);
   if (val < 40){ 
+   t = millis() / 1000.0;
+   y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
   digitalWrite(LEDPIN, HIGH);
   } else {
   digitalWrite (LEDPIN, LOW);
@@ -183,74 +189,73 @@ void loop() {
     wemoWrite (MYWEMO, LOW); //WEMO Functions
     display.printf("Motion\nWEMO Off!\n");//OLED display code Motion Sensor WEMO Off-----------------
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-  } else {
+   } else {
     wemoWrite (MYWEMO, HIGH);// WEMO On FUnctions
     display.printf("Motion\nWEMO On!\n");//OLED display code Motion Sensor WEMO ON-----------------
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
     //delay(200);
-  }
+   }
   //display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
   } else {
-//Wemo Red button with added Display code-----------------------------------------
-//delay(2000);
- if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
+  // Wemo Red button with added Display code-----------------------------------------
+  //delay(2000);
+  if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
   wemoOnOff= !wemoOnOff;
    }
- if (wemoOnOff) {
+  if (wemoOnOff) {
   wemoWrite (MYWEMO, HIGH);
   display.printf("Wemo#%i\nManual On\n",MYWEMO);//OLED display code WEMO OnOff-----------------
   display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
-  //Serial.printf("Turning on Wemo# %i \n", MYWEMO);
+  // Serial.printf("Turning on Wemo# %i \n", MYWEMO);
    } else {
   wemoWrite(MYWEMO, LOW);
   display.printf("Wemo#%i    Manual Off",MYWEMO);//OLED display code WEMO OnOff-----------------
   display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
-  //Serial.printf("Turning off Wemo# %i \n", MYWEMO);
+  // Serial.printf("Turning off Wemo# %i \n", MYWEMO);
    }
   }
-// Hue Button Functions with added Display code----------------------------------------------------------------------------------------
- if (grayButton.isClicked()) {
+  // Hue Button Functions with added Display code----------------------------------------------------------------------------------------
+  if (grayButton.isClicked()) {
   display.printf("Hue Light On/Off!\n");//OLED display code Hue Ligths OnOff-----------------
   display.display(); // OLED Display Function for Gray Button Hue On Off--------------------------------------------
   hueOnOff=!hueOnOff;
   }
-//Encoder Button to cycle through colors with added Display code-----------------------------------------------------------------------
- if (myEncBtn.isPressed()) {
+  //Encoder Button to cycle through colors with added Display code-----------------------------------------------------------------------
+  if (myEncBtn.isPressed()) {
   display.printf("Set Bulb %iColor%06i\n",BULB,HueRainbow[color%7]);//OLED display code Hue Color-----------------
   display.display(); // OLED Display Function for Encoder Button--------------------------------------------
- if (millis()-lightTime>lightDelay) {
+  if (millis()-lightTime>lightDelay) {
   colorNum=HueRainbow[color%7];
   color++;
   lightTime=millis();
   }
-  
-//Encoder Funtions
+  // Encoder Funtions
   hueBright=myEnc.read();
   if(hueBright<=0){
   hueBright=0;
   myEnc.write(0);
- }
+  }
   if(hueBright>=255){
   hueBright=255;
   myEnc.write(255);
- }
-//Encoder button with added Display code-----------------------------------------------------------------------------------------------
+  }
+  // Encoder button with added Display code-----------------------------------------------------------------------------------------------
   if (hueBright!= prevenc){
   display.clearDisplay(); //added display code
   display.setCursor(0,0); //added display code
   display.printf("BrightnessValue %i\n",hueBright);//OLED printf code Hue Brightness Encoder Potentiometer-----------------
   display.display(); // OLED Display Function for Encoder Button--------------------------------------------
   prevenc = hueBright;
+  }
  }
-}
-setHue(BULB,hueOnOff,colorNum,hueBright,255);
-delay(100); 
-// NeoPixel Code with Black Button---------------------------------------------------------
-if (blackButton.isClicked()) {
+  setHue(BULB,hueOnOff,colorNum,hueBright,255);
+  delay(100); 
+  // NeoPixel Code with Black Button---------------------------------------------------------
+  if (blackButton.isClicked()) {
   modeSeq++;
   display.printf("NEOPIXEL\nModeSeq\n");//added OLED display code -----------------
   display.display(); // OLED Display Function for NeoPixel Button--------------------------------------------
-}
+ }
   if (modeSeq%4==1) {  //Mode Sequence for NeopIxels---------------------------------------
   display.printf("NEOPIXEL\nRainbow On\n");//added OLED display code -----------------
   display.display(); // OLED Display Function for NeoPixel Button--------------------------------------------
@@ -263,7 +268,7 @@ if (blackButton.isClicked()) {
   i++;
   if (i>6){i=0;}
   delay(100); 
-  }
+ }
    //NeoPixel Random Code----------------------------------------------------------
   if (modeSeq%4==2) {
   //pixel.clear (); // Clear Pixels----------------
@@ -277,10 +282,9 @@ if (blackButton.isClicked()) {
   pixel.show ();
   }
   delay(200);
-  }
-  //if (modeSeq>2){modeSeq=0;}
-    if (modeSeq%4==3) {
-  //pixel.clear (); // Clear Pixels----------------
+ }
+  if (modeSeq%4==3) {
+  // pixel.clear (); // Clear Pixels----------------
   display.printf("NEOPIXEL\nColor On\n");//added OLED display code -----------------
   display.display(); // OLED Display Function for Encoder Button--------------------------------------------
   for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
@@ -291,7 +295,7 @@ if (blackButton.isClicked()) {
   i++;
   if (i>6){i=0;}
   delay(100);
-  }
+ }
   //display.display(); // OLED Display Function Temp-------------------------------------------
 }
  // SIne Wave Functins for LED/NeoPixels-------------------
