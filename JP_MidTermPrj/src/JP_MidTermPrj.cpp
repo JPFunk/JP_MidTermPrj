@@ -1,7 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 01/12/2024
+ * Date: 01/12/2024 Best Build Yet!
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -22,7 +22,7 @@
 const int LEDPIN = A2;
 const int PHOTODIODE = A1;
 int val;
-// RGB LED Sine Wave---------Not Using-------------------------------
+// LED Sine Wave----------------------------------------
 float value , n ;
 float t;
 float y;
@@ -31,7 +31,8 @@ float s;
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
 //Hue
-int BULB; 
+int BULB;
+int BULB6;
 int color;
 int colorNum;
 //Millis time for lights
@@ -62,28 +63,24 @@ int hueBright;
 int hueColor;
 int prevenc;
 Encoder myEnc(D8,D9);
-//Button myEncBtn(PIN);
 // Encoder Button code
 const int GREENBUTTONPIN=D17;
 const int REDBUTTONPIN=D18;
 int greenState,redState;
 bool buttonState;
 // Wemo
-const int MYWEMO=3;
+const int MYWEMO = 0;
+const int MYWEMO3 = 3;
 //NEOPIXEL
 int ledState=LOW; 
-const int PIXELCOUNT = 8; // Total number of NeoPixels might be 18 for the project!
+const int PIXELCOUNT = 9; // Total number of NeoPixels might be 18 for the project!
 Adafruit_NeoPixel pixel(PIXELCOUNT, SPI1, WS2812B); // declare object
 const int neoPixBtn (D2);
 int pixelAddr;
 int colorCount;
 int position;
 int mySeq [PIXELCOUNT];
-int x;
-int temp;
-int i;
-int j;
-int k;
+int x, temp, i, j, k;
 int modeSeq;
 //MotionSensor
 const int MYPIR=0;
@@ -159,7 +156,8 @@ display.setTextColor(WHITE);
 lightDelay=2000;
 Serial.begin(9600);
 waitFor(Serial.isConnected,15000);
-BULB =1;
+BULB = 1;
+BULB6 = 6;
 // Encoder----------------------------------------------
 pinMode(GREENBUTTONPIN, OUTPUT);
 pinMode(REDBUTTONPIN, OUTPUT);
@@ -175,9 +173,9 @@ void loop() {
   if (val < 40){ 
    t = millis() / 1000.0;
    y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
-  digitalWrite(LEDPIN, HIGH);
+  analogWrite(LEDPIN, y);  //digitalWrite (LEDPIN, HIGH);
   } else {
-  digitalWrite (LEDPIN, LOW);
+  analogWrite (LEDPIN, LOW); //digitalWrite (LEDPIN, LOW);
   }
   // Switch Code OnOff functions for Wemo RedButton and Motion Sensor w/ DIsplay Code--------------
   modeOnOff = digitalRead(modeSwitch);
@@ -186,11 +184,13 @@ void loop() {
   // Serial.printf("%i\n",modeOnOff);
   // Serial.printf("%i\n",moval);
    if (moval==LOW){
-    wemoWrite (MYWEMO, LOW); //WEMO Functions
+    wemoWrite (MYWEMO, LOW); //WEMO 0 Off Functions
+    wemoWrite (MYWEMO3, LOW); //WEMO 3 Off Functions
     display.printf("Motion\nWEMO Off!\n");//OLED display code Motion Sensor WEMO Off-----------------
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
    } else {
-    wemoWrite (MYWEMO, HIGH);// WEMO On FUnctions
+    wemoWrite (MYWEMO, HIGH);// WEMO 0 On FUnctions
+    wemoWrite (MYWEMO3, HIGH);// WEMO 3 On FUnctions
     display.printf("Motion\nWEMO On!\n");//OLED display code Motion Sensor WEMO ON-----------------
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
     //delay(200);
@@ -203,12 +203,14 @@ void loop() {
   wemoOnOff= !wemoOnOff;
    }
   if (wemoOnOff) {
-  wemoWrite (MYWEMO, HIGH);
+  wemoWrite (MYWEMO, HIGH); //WEMO 0 On Functions
+  wemoWrite (MYWEMO3, HIGH); //WEMO 3 On Functions
   display.printf("Wemo#%i\nManual On\n",MYWEMO);//OLED display code WEMO OnOff-----------------
   display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
   // Serial.printf("Turning on Wemo# %i \n", MYWEMO);
    } else {
-  wemoWrite(MYWEMO, LOW);
+  wemoWrite(MYWEMO, LOW); //WEMO 0 Off Functions
+  wemoWrite(MYWEMO3, LOW); //WEMO 3 Off Functions
   display.printf("Wemo#%i    Manual Off",MYWEMO);//OLED display code WEMO OnOff-----------------
   display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
   // Serial.printf("Turning off Wemo# %i \n", MYWEMO);
@@ -222,7 +224,7 @@ void loop() {
   }
   //Encoder Button to cycle through colors with added Display code-----------------------------------------------------------------------
   if (myEncBtn.isPressed()) {
-  display.printf("Set Bulb %iColor%06i\n",BULB,HueRainbow[color%7]);//OLED display code Hue Color-----------------
+  display.printf("Set Bulb %iColor%06i\n",BULB%i,HueRainbow[color%7]);//OLED display code Hue Color-----------------
   display.display(); // OLED Display Function for Encoder Button--------------------------------------------
   if (millis()-lightTime>lightDelay) {
   colorNum=HueRainbow[color%7];
@@ -249,6 +251,7 @@ void loop() {
   }
  }
   setHue(BULB,hueOnOff,colorNum,hueBright,255);
+  setHue(BULB6,hueOnOff,colorNum,hueBright,255);
   delay(100); 
   // NeoPixel Code with Black Button---------------------------------------------------------
   if (blackButton.isClicked()) {
