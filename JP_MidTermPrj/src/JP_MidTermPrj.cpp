@@ -1,7 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 01/12/2024 Best Build Yet!
+ * Date: 01/14/2024 Improving and Clean Up minor changes
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -167,7 +167,7 @@ void loop() {
 // The core of your code will likely live here.
   display.clearDisplay(); //OLED Master display code OnOff functions in Void Loop----
   display.setCursor(0,0);
-  // PhotoDiode LED-------------------------
+  // PhotoDiode & Bright Red LED with Pulsing Sine Wave code------------------------
   val = analogRead(A1);
   Serial.printf("photodiode %i \n",val);
   if (val < 40){ 
@@ -251,8 +251,7 @@ void loop() {
   }
  }
   setHue(BULB,hueOnOff,colorNum,hueBright,255);
-  setHue(BULB6,hueOnOff,colorNum,hueBright,255);
-  delay(100); 
+  // setHue(BULB6,hueOnOff,colorNum,hueBright,255); // Temporarily Commented out Hue BULB 6 as it slows the code
   // NeoPixel Code with Black Button---------------------------------------------------------
   if (blackButton.isClicked()) {
   modeSeq++;
@@ -272,7 +271,7 @@ void loop() {
   if (i>6){i=0;}
   delay(100); 
  }
-   //NeoPixel Random Code----------------------------------------------------------
+  // NeoPixel Random Code----------------------------------------------------------
   if (modeSeq%4==2) {
   //pixel.clear (); // Clear Pixels----------------
   display.printf("NEOPIXEL\nRandom On\n");//added OLED display code -----------------
@@ -292,17 +291,19 @@ void loop() {
   display.display(); // OLED Display Function for Encoder Button--------------------------------------------
   for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
   pixel.setPixelColor (pixelAddr, rainbow[i]);
-  delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
+  delay(100); // needs to be turned on for NeoStrip SetPixelColor assignment
   }
   pixel.show (); // nothing changes until show ()
   i++;
-  if (i>6){i=0;}
-  delay(100);
+  if (i>6) {i=0;}
+  delay(300);
  }
+ // new code addition for turnign off Neoplixels
+  if (modeSeq%4==4) {
+  display.printf("NEOPIXEL\nOff\n");//added OLED display code -----------------
+  display.display(); // OLED Display Function for Encoder Button--------------------------------------------
+  pixel.clear (); // Clear Pixels----------------
+  }
   //display.display(); // OLED Display Function Temp-------------------------------------------
 }
- // SIne Wave Functins for LED/NeoPixels-------------------
-//   t = millis() / 1000.0;
-//   y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
-//  analogWrite (LEDPIN, y);
 
