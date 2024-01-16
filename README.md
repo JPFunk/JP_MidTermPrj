@@ -7,22 +7,24 @@ The Pyramid Ambient Light Smart Room Controller components:
 2. OLED display screen (1)
 3. Encoder button (1)
 4. Adafruit Motion Sensor (1) for Automantic functions.
-5. NeoPixels (8) for Pyramid Lighting (base)
-6. NeoPixel Ring (12) for Pyramid illumination.
+5. NeoPixels (9) for Acrylic Pyramid Lighting customs freatures (base).
+6. Photodiode w/ LEDs for dark space automatic lighting feature (base).
 7. Push buttons (3) & switch (1) for manual controls.
 8. Custom BMP Pyramid startup display Graphics.
 9. Custom designed Acrylic Pyramid Top (6.25 (x3) inches) highly detailed filigree patterns.
-10. Custom 3D Printed Pyramid Base that houses all of the electronics features for Acrylic top.
+10. Custom 3D Printed Pyramid Base top and bottom that houses all of the electronics features for Acrylic top.
 
 Manual controls include:
 * OLED display that features screen grahpics and detailed readouts of all manual & auto Functions.
-* NeoPixel lights that illuminate the Pyramdid Acryclic top with laser engraved Details.
+* Buttons, Swtich and Controller to toggle between various features and Automatic Mode.
+* Multi fuinctional NeoPixel lights that illuminate the Pyramdid Acryclic top with laser engraved Details.
 * Hue lights functions including On/Off with Color changing and Brightness.
-* WEMO outlets On/Off control.
+* 3 WEMO outlets On/Off control.
 
 Automatic controls features:
-* Motion Sensor for WEMO functions.
+* Motion Sensor for 3 WEMO Autmomatic OnOff function.
 * Neoplixel light show.
+* PhotoDiode with LED's for automatic night/dark room space for ambient Pyramid and Logo glowing functions.
 
 This repository includes:
 * JP_MidTermPrj.cpp

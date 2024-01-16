@@ -1,7 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 01/14/2024 Improving and Clean Up minor changes
+ * Date: 01/15/2024 Adding more functionality to Motion Sensor function with Mulitple WEMO's
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -71,6 +71,9 @@ bool buttonState;
 // Wemo
 const int MYWEMO = 0;
 const int MYWEMO3 = 3;
+const int MYWEMO4 = 4;
+int myWemoSeq [] = {MYWEMO,MYWEMO3,MYWEMO4};
+int wemoNumSeq;
 //NEOPIXEL
 int ledState=LOW; 
 const int PIXELCOUNT = 9; // Total number of NeoPixels might be 18 for the project!
@@ -152,6 +155,10 @@ delay(1000);
 // Display Text
 display.setTextSize(2);
 display.setTextColor(WHITE);
+// JP's Disply Project Credits
+display.clearDisplay();
+display.printf("JP Funk\nIoTMidTermSmart RoomController");//OLED display code WEMO OnOff-----------------
+display.display(); // OLED Display Function for Red Button Wemo On Off-
 // Hue Light--------------------------------------------
 lightDelay=2000;
 Serial.begin(9600);
@@ -183,19 +190,17 @@ void loop() {
   if (modeOnOff) {
   // Serial.printf("%i\n",modeOnOff);
   // Serial.printf("%i\n",moval);
-   if (moval==LOW){
-    wemoWrite (MYWEMO, LOW); //WEMO 0 Off Functions
-    wemoWrite (MYWEMO3, LOW); //WEMO 3 Off Functions
-    display.printf("Motion\nWEMO Off!\n");//OLED display code Motion Sensor WEMO Off-----------------
+  if (moval==LOW){       
+    wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
+     // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
+    display.printf("Motion\nWEMO#%i Off!\n");//OLED display code Motion Sensor WEMO Off
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+   wemoNumSeq++;
    } else {
-    wemoWrite (MYWEMO, HIGH);// WEMO 0 On FUnctions
-    wemoWrite (MYWEMO3, HIGH);// WEMO 3 On FUnctions
-    display.printf("Motion\nWEMO On!\n");//OLED display code Motion Sensor WEMO ON-----------------
+    wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Motion Sensor WEMO On FUnctions
+    display.printf("Motion\nWEMO#%i On!\n");//OLED display code Motion Sensor WEMO ON
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-    //delay(200);
    }
-  //display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
   } else {
   // Wemo Red button with added Display code-----------------------------------------
   //delay(2000);
@@ -205,12 +210,14 @@ void loop() {
   if (wemoOnOff) {
   wemoWrite (MYWEMO, HIGH); //WEMO 0 On Functions
   wemoWrite (MYWEMO3, HIGH); //WEMO 3 On Functions
+  wemoWrite (MYWEMO4, HIGH); //WEMO 4 On Functions
   display.printf("Wemo#%i\nManual On\n",MYWEMO);//OLED display code WEMO OnOff-----------------
   display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
   // Serial.printf("Turning on Wemo# %i \n", MYWEMO);
    } else {
-  wemoWrite(MYWEMO, LOW); //WEMO 0 Off Functions
-  wemoWrite(MYWEMO3, LOW); //WEMO 3 Off Functions
+  wemoWrite (MYWEMO, LOW); //WEMO 0 Off Functions
+  wemoWrite (MYWEMO3, LOW); //WEMO 3 Off Functions
+  wemoWrite (MYWEMO4, HIGH); //WEMO 4 Off Functions
   display.printf("Wemo#%i    Manual Off",MYWEMO);//OLED display code WEMO OnOff-----------------
   display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
   // Serial.printf("Turning off Wemo# %i \n", MYWEMO);
