@@ -32,7 +32,7 @@ float s;
 const int OLED_RESET=-1;
 Adafruit_SSD1306 display(OLED_RESET);
 //Hue
-int BULB = 0;
+int BULB = 1;
 int BULB4 = 4;
 int BULB6 =6;
 int color;
