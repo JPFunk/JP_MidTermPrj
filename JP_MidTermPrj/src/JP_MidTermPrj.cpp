@@ -178,11 +178,11 @@ void loop() {
   // PhotoDiode & Bright Red LED with Pulsing Sine Wave code------------------------
   val = analogRead(A1);
   if (val < 40){ 
+  display.printf("Diode On%i\n",val);
+  display.display();
    t = millis() / 1000.0;
    y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
   analogWrite(LEDPIN, y);  //digitalWrite (LEDPIN, HIGH);
-  display.printf("Diode On%i\n",val);
-  display.display();
   } else {
   analogWrite (LEDPIN, LOW); //digitalWrite (LEDPIN, LOW);
   display.printf("Diode Off\n");
@@ -195,47 +195,48 @@ void loop() {
   if (modeOnOff) {
   // Serial.printf("%i\n",modeOnOff);
   // Serial.printf("%i\n",moval);
-  //  if (moval==LOW){       
-  //   wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Beginning New Motion Code Sequnce for WEMO Array--------------------
-  //    // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
-  //   display.printf("Motion\nWEMO#%i Off!\n");//OLED display code Motion Sensor WEMO Off
-  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-  //  wemoNumSeq++;
-  //  } else {
-  //   wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Motion Sensor WEMO On FUnctions
-  //   display.printf("Motion\nWEMO#%i On!\n");//OLED display code Motion Sensor WEMO ON
-  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-  //  } //End New Motion Code Sequnce for WEMO Array----------------------------------------------------------------
-     if (moval==LOW){  // Beginning New Motion WEMO COde------------------------------   
-    wemoWrite (myWemoSeq [0], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
+   if (moval==LOW){       
+    wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Beginning New Motion Code Sequnce for WEMO Array--------------------
      // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
-    display.printf("Motion\nWEMO#0 Off");//OLED display code Motion Sensor WEMO Off
+    display.printf("Motion\nWEMO#%i Off!\n");//OLED display code Motion Sensor WEMO Off
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+   wemoNumSeq++;
    } else {
-    wemoWrite (myWemoSeq [0], HIGH); //Motion Sensor WEMO On FUnctions
-    display.printf("Motion\nWEMO#0 On\n");//OLED display code Motion Sensor WEMO ON
-    display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-   }   
-     if (moval==LOW){   
-    wemoWrite (myWemoSeq [1], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
-     // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
-    display.printf("Motion\nWEMO#3 Off");//OLED display code Motion Sensor WEMO Off
-    display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-   } else {
-    wemoWrite (myWemoSeq [1], HIGH); //Motion Sensor WEMO On FUnctions
-    display.printf("Motion\nWEMO#3 On\n");//OLED display code Motion Sensor WEMO ON
+    wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Motion Sensor WEMO On FUnctions
+    display.printf("Motion\nWEMO#%i On!\n");//OLED display code Motion Sensor WEMO ON
     display.display(); // OLED Display Function for WEMO Button--------------------------------------------
    } 
-     if (moval==LOW){  // New Motion WEMO4 COde------------------------------   
-    wemoWrite (myWemoSeq [2], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
-     // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
-    display.printf("Motion\nWEMO#4 Off");//OLED display code Motion Sensor WEMO Off
-    display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-   } else {
-    wemoWrite (myWemoSeq [2], HIGH); //Motion Sensor WEMO On FUnctions
-    display.printf("Motion\nWEMO#4 On\n");//OLED display code Motion Sensor WEMO ON
-    display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-   }    // END New Motion WEMO COde------------------------------  
+  //End New Motion Code Sequnce for WEMO Array----------------------------------------------------------------
+  //    if (moval==LOW){  // Beginning New Motion WEMO COde------------------------------   
+  //   wemoWrite (myWemoSeq [0], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
+  //    // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
+  //   display.printf("Motion\nWEMO#0 Off");//OLED display code Motion Sensor WEMO Off
+  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+  //  } else {
+  //   wemoWrite (myWemoSeq [0], HIGH); //Motion Sensor WEMO On FUnctions
+  //   display.printf("Motion\nWEMO#0 On\n");//OLED display code Motion Sensor WEMO ON
+  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+  //  }   
+  //    if (moval==LOW){   
+  //   wemoWrite (myWemoSeq [1], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
+  //    // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
+  //   display.printf("Motion\nWEMO#3 Off");//OLED display code Motion Sensor WEMO Off
+  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+  //  } else {
+  //   wemoWrite (myWemoSeq [1], HIGH); //Motion Sensor WEMO On FUnctions
+  //   display.printf("Motion\nWEMO#3 On\n");//OLED display code Motion Sensor WEMO ON
+  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+  //  } 
+  //    if (moval==LOW){  // New Motion WEMO4 COde------------------------------   
+  //   wemoWrite (myWemoSeq [2], LOW); //Motion Sensor WEMO Off Functions-------------------------------------
+  //    // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
+  //   display.printf("Motion\nWEMO#4 Off");//OLED display code Motion Sensor WEMO Off
+  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+  //  } else {
+  //   wemoWrite (myWemoSeq [2], HIGH); //Motion Sensor WEMO On FUnctions
+  //   display.printf("Motion\nWEMO#4 On\n");//OLED display code Motion Sensor WEMO ON
+  //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+  //  }    // END New Motion WEMO COde------------------------------  
   } else {
   // Wemo Red button with added Display code-----------------------------------------
   //delay(2000);
