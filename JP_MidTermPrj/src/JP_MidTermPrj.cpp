@@ -164,6 +164,7 @@ display.setTextColor(WHITE);
 display.clearDisplay();
 display.printf("JP Funk\nIoTMidTermSmart RoomController");//OLED display code WEMO OnOff-----------------
 display.display(); // OLED Display Function for Red Button Wemo On Off-
+delay(2000);
 // Hue Light--------------------------------------------
 lightDelay=2000;
 Serial.begin(9600);
@@ -178,168 +179,151 @@ pinMode(REDBUTTONPIN, OUTPUT);
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
 // The core of your code will likely live here.
-  display.clearDisplay(); //OLED Master display code OnOff functions in Void Loop----
+  //OLED Master display code OnOff functions in Void Loop----
   display.setCursor(0,0);
   // PhotoDiode & Bright Red LED with Pulsing Sine Wave code------------------------
   val = analogRead(A1);
   if (val < 40){
-//  display.clearDisplay(); 
-  display.printf("Diode On%i\n",val);
-  display.display();
-   t = millis() / 1000.0;
-   y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
-  analogWrite(LEDPIN, y);  //digitalWrite (LEDPIN, HIGH);
-  } else {
-  analogWrite(LEDPIN, LOW); //digitalWrite (LEDPIN, LOW);
-//  display.clearDisplay();
-  display.printf("Diode Off\n");
-  display.display();
+    display.clearDisplay();
+    display.printf("Diode On%i",val);
+    //display.display();
+    t = millis() / 1000.0;
+    y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
+    analogWrite(LEDPIN, y);  //digitalWrite (LEDPIN, HIGH);
+    } else {
+    analogWrite(LEDPIN, LOW); //digitalWrite (LEDPIN, LOW);
+    display.clearDisplay();
+    display.printf("Diode Off\n");
+    display.display();
   }
   // Switch Code OnOff functions for Wemo RedButton and Motion Sensor w/ DIsplay Code--------------
   modeOnOff = digitalRead(modeSwitch);
   moval=digitalRead(motionPin);
   if (modeOnOff) {
-  // Serial.printf("%i\n",modeOnOff);
-  // Serial.printf("%i\n",moval);
-   if (moval==LOW){  
-    setHue (myHueSeq [hueNumSeq%3],FALSE,0,0,255);  //setHue(BULB,FALSE,0,0,255);   
-    wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Beginning New Motion Code Sequnce for WEMO Array--------------------
-     // wemoWrite (myWemoSeq [wemoNumSeq%3], moval); // Motion Sensor OnOff with "moval" instead of LOW/HIGH
-  //  display.clearDisplay();
-    display.printf("Motion\nWEMO#%i Off!\n");//OLED display code Motion Sensor WEMO Off
-    display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-    wemoNumSeq++;
-    hueNumSeq++;
-   } else {
-    setHue (myHueSeq [hueNumSeq%3],TRUE,0,255,255); //setHue(BULB,TRUE,0,255,255);
-    wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Motion Sensor WEMO On FUnctions
-  //  display.clearDisplay();
-    display.printf("Motion\nWEMO#%i On!\n");//OLED display code Motion Sensor WEMO ON
-    display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-   } 
-   hueOnOff==hueOnOff;
+    // Serial.printf("%i\n",modeOnOff);
+    // Serial.printf("%i\n",moval);
+    if (moval==LOW){  
+      setHue (myHueSeq [hueNumSeq%3],FALSE,0,0,255);  //setHue(BULB,FALSE,0,0,255);   
+      wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Beginning New Motion Code Sequnce for WEMO Array--------------------
+      display.printf("Mo-WemoOff");
+      wemoNumSeq++;
+      hueNumSeq++;
+      } else {
+      setHue (myHueSeq [hueNumSeq%3],TRUE,0,255,255); //setHue(BULB,TRUE,0,255,255);
+      wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Motion Sensor WEMO On FUnctions
+      display.printf("Mo-Wemo On");//OLED display code Motion Sensor WEMO ON
+      }
+      display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+      hueOnOff==hueOnOff;
   } else {
-  // Wemo Red button with added Display code-----------------------------------------
-  //delay(2000);
-  if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
-  wemoOnOff= !wemoOnOff;
-   }
-  if (wemoOnOff) {
-    wemoWrite (MYWEMO, HIGH); //WEMO 0 On Functions
-    wemoWrite (MYWEMO3, HIGH); //WEMO 3 On Functions
-    wemoWrite (MYWEMO4, HIGH); //WEMO 4 On Functions
-  //  display.clearDisplay();
-    display.printf("Wemo#%i\nManual On\n",MYWEMO);//OLED display code WEMO OnOff-----------------
-    display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
-    // Serial.printf("Turning on Wemo# %i \n", MYWEMO);
+    // Wemo Red button with added Display code-----------------------------------------
+    if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
+     wemoOnOff= !wemoOnOff;
+    }
+    if (wemoOnOff) {
+      wemoWrite (MYWEMO, HIGH); //WEMO 0 On Functions
+      wemoWrite (MYWEMO3, HIGH); //WEMO 3 On Functions
+      wemoWrite (MYWEMO4, HIGH); //WEMO 4 On Functions
+      display.printf("Wemo On\n");//OLED display code WEMO OnOff-----------------
+      // Serial.printf("Turning on Wemo# %i \n", MYWEMO);
     } else {
-    wemoWrite (MYWEMO, LOW); //WEMO 0 Off Functions
-    wemoWrite (MYWEMO3, LOW); //WEMO 3 Off Functions
-    wemoWrite (MYWEMO4, HIGH); //WEMO 4 Off Functions
-  //  display.clearDisplay();
-    display.printf("Wemo#%i\nManual Off",MYWEMO);//OLED display code WEMO OnOff-----------------
-    display.display(); // OLED Display Function for Red Button Wemo On Off--------------------------------------------
-  // Serial.printf("Turning off Wemo# %i \n", MYWEMO);
-   }
+      wemoWrite (MYWEMO, LOW); //WEMO 0 Off Functions
+      wemoWrite (MYWEMO3, LOW); //WEMO 3 Off Functions
+      wemoWrite (MYWEMO4, HIGH); //WEMO 4 Off Functions
+      display.printf("Wemo Off\n");//OLED display code WEMO OnOff-----------------
+      // Serial.printf("Turning off Wemo# %i \n", MYWEMO);
+    }
+    display.display(); // OLED Display Function for Red Button Wemo--------------------------------------------
   }
   // Hue Button Functions with added Display code----------------------------------------------------------------------------------------
   if (grayButton.isClicked()) {
     changed = TRUE;
-  //  display.clearDisplay();
-    display.printf("Hue Light On/Off!\n");//OLED display code Hue Ligths OnOff-----------------
+    display.printf("Hue On/Off");//OLED display code Hue Ligths OnOff-----------------
     display.display(); // OLED Display Function for Gray Button Hue On Off--------------------------------------------
     hueOnOff=!hueOnOff;
   }
   //Encoder Button to cycle through colors with added Display code-----------------------------------------------------------------------
-    if (myEncBtn.isPressed()) {
-  //  display.clearDisplay();
-    display.printf("Set Bulb %iColor%06i\n",BULB%i,HueRainbow[color%7]);//OLED display code Hue Color-----------------
+  if (myEncBtn.isPressed()) {
+    display.printf("Bulb%iColor%06i",BULB%i,HueRainbow[color%7]);//OLED display code Hue Color-----------------
     display.display(); // OLED Display Function for Encoder Button--------------------------------------------
     colorNum=HueRainbow[color%7];
     color++;
     changed = TRUE;
     }
-  // Encoder Funtions
-      hueBright=myEnc.read();
-      if(hueBright<=0){
+    // Encoder Funtions
+    hueBright=myEnc.read();
+    if(hueBright<=0){
       hueBright=0;
       myEnc.write(0);
       }
       if(hueBright>=255){
-      hueBright=255;
-      myEnc.write(255);
-      }
+        hueBright=255;
+        myEnc.write(255);
+        }
   // Encoder button with added Display code-----------------------------------------------------------------------------------------------
-    if (hueBright!= prevenc){
-  //  display.clearDisplay(); //added display code
-    display.printf("BrightnessValue %i\n",hueBright);//OLED printf code Hue Brightness Encoder Potentiometer-----------------
-    display.display(); // OLED Display Function for Encoder Button--------------------------------------------
+  if (hueBright!= prevenc){
+    display.printf("Bright %i\n",hueBright);//OLED printf code Hue Brightness Encoder Potentiometer-----------------
     prevenc = hueBright; 
     changed = TRUE;
     }
     if(changed) {
-    setHue(BULB,hueOnOff,colorNum,hueBright,255);
-    setHue(BULB6,hueOnOff,colorNum,hueBright,255); // Temporarily Commented out Hue BULB 6 as it slows the code
-    changed=FALSE;
-  }
+      setHue(BULB,hueOnOff,colorNum,hueBright,255);
+      setHue(BULB4,hueOnOff,colorNum,hueBright,255);
+      setHue(BULB6,hueOnOff,colorNum,hueBright,255);
+      changed=FALSE;
+      display.display(); // OLED Display Function for Encoder Button--------------------------------------------
+    }
 
   // NeoPixel Code with Black Button---------------------------------------------------------
   if (blackButton.isClicked()) {
     modeSeq++;
-   // display.clearDisplay();
-    display.printf("NEOPIXEL\nModeSeq\n");//added OLED display code -----------------
+    display.printf("NEOPIX Seq");//added OLED display code -----------------
     display.display(); // OLED Display Function for NeoPixel Button--------------------------------------------
     }
     if (modeSeq%4==1) {  //Mode Sequence for NeopIxels---------------------------------------
-   // display.clearDisplay();
-    display.printf("NEOPIXEL\nRainbow On");//added OLED display code -----------------
-    display.display(); // OLED Display Function for NeoPixel Button--------------------------------------------
-    // NeoPixel Rainbow functions
+      display.printf("Rainbow On");//added OLED display code -----------------
+      // NeoPixel Rainbow functions
     for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
-    pixel.setPixelColor (pixelAddr, rainbow[i]);
-    delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
-    }
-    pixel.show (); // nothing changes until show ()
-    i++;
+      pixel.setPixelColor (pixelAddr, rainbow[i]);
+      delay(20); // needs to be turned on for NeoStrip SetPixelColor assignment
+      }
+      pixel.show (); // nothing changes until show ()
+      i++;
     if (i>6){i=0;}
-    delay(100); 
+      delay(100);
+      display.display(); // OLED Display Function for NeoPixel --------------------------------------------
   }
   // NeoPixel Random Code----------------------------------------------------------
   if (modeSeq%4==2) {
-  //pixel.clear (); // Clear Pixels----------------
-   // display.clearDisplay();
-    display.printf("NEOPIXEL\nRandom On\n");//added OLED display code -----------------
-    display.display(); // OLED Display Function for NeoPixel Button--------------------------------------------
+    display.printf("Random On\n");//added OLED display code -----------------
     // NeoPixel Random Color Functions
     for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
-    x=random(7);
-    mySeq[pixelAddr]=x;
-    pixel.setPixelColor(pixelAddr, rainbow[mySeq[pixelAddr]]);
-    pixel.show ();
+      x=random(7);
+      mySeq[pixelAddr]=x;
+      pixel.setPixelColor(pixelAddr, rainbow[mySeq[pixelAddr]]);
+      pixel.show ();
     }
     delay(200);
- }
+    display.display(); // OLED Display Function for NeoPixel--------------------------------------------
+  }
   if (modeSeq%4==3) {
-  // pixel.clear (); // Clear Pixels----------------
-   // display.clearDisplay();
-    display.printf("NEOPIXEL\nColor On\n");//added OLED display code -----------------
-    display.display(); // OLED Display Function for Encoder Button--------------------------------------------
+    display.printf("Color On");//added OLED display code -----------------
     for (pixelAddr =0; pixelAddr <PIXELCOUNT; pixelAddr++) {
-    pixel.setPixelColor (pixelAddr, rainbow[i]);
-    delay(100); // needs to be turned on for NeoStrip SetPixelColor assignment
+      pixel.setPixelColor (pixelAddr, rainbow[i]);
+      delay(100); // needs to be turned on for NeoStrip SetPixelColor assignment
     }
     pixel.show (); // nothing changes until show ()
     i++;
     if (i>6) {i=0;}
-  //delay(300);
+    // delay(300);
+    display.display(); // OLED Display Function for NeoPixel--------------------------------------------
   }
  // new code addition for turnign off Neoplixels
   if (modeSeq%4==4) {
- // display.clearDisplay();
-  display.printf("NEOPIXEL\nOff\n");//added OLED display code -----------------
-  display.display(); // OLED Display Function for Encoder Button--------------------------------------------
-  pixel.clear (); // Clear Pixels----------------
+    display.printf("NEOPIX Off");//added OLED display code -----------------
+    display.display(); // OLED Display Function for Encoder Button--------------------------------------------
+    pixel.clear (); // Clear Pixels----------------
   }
-  //display.display(); // OLED Display Function Temp-------------------------------------------
+  display.display(); // OLED Display Function Temp-------------------------------------------
 }
 
