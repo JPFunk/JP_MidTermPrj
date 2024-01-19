@@ -1,7 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 01/18/2024 Final Fixes and Code Lock w/ commented out sections was not a ble to get working before end of Day
+ * Date: 01/19/2024 Final Fixes and Code Lock 
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -33,7 +33,7 @@ Adafruit_SSD1306 display(OLED_RESET);
 //Hue
 int BULB = 1;
 int BULB4 = 4;
-int BULB6 =6;
+int BULB6 = 6;
 int color;
 int colorNum;
 int myHueSeq [] = {BULB,BULB4,BULB6};
@@ -92,8 +92,8 @@ int modeSeq;
 //MotionSensor
 const int MYPIR=0;
 int motionPin=D11;
-int pirState=LOW; //   t = millis() / 1000.0;
-int moval;//   y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
+int pirState=LOW;
+int moval;
 int movalOld;
 // Millis--------------------------
 int startime;
@@ -219,25 +219,7 @@ void loop() {
       }
       display.display(); // OLED Display Function for WEMO Button--------------------------------------------
       hueOnOff==hueOnOff;
-      //new if statement for moval and WEMO and Hue not working but tried to make sequnce in order-----**********************
-      // if ( moval == LOW && (movalOld != moval )) {
-      //   movalOld = moval;
-      //   setHue (myHueSeq [hueNumSeq%3],FALSE,colorNum,0,255); //setHue(BULB,TRUE,0,255,255);
-      //   wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Motion Sensor WEMO On FUnctions
-      //   wemoNumSeq++;
-      //   hueNumSeq++;
-      //   display.printf("Mo-Wemo Off");//OLED display code Motion Sensor WEMO ON
-      //   } else if (moval == HIGH && (movalOld != moval)) {  
-      //   movalOld = moval;
-      //   setHue (myHueSeq [hueNumSeq%3],TRUE,colorNum,255,255);  //setHue(BULB,FALSE,0,0,255);   
-      //   wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Beginning New Motion Code Sequnce for WEMO Array--------------------
-      //   colorNum=HueRainbow[color%7];// Hue Light color change code
-      //   color++;// Hue Light color change code
-      //   changed = TRUE;// Hue Light color change code
-      //   display.printf("Mo-Wemo On");
-      //   }
-      //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
-      //   hueOnOff==hueOnOff;
+
   } else {
     // Wemo Red button with added Display code-----------------------------------------
     if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
@@ -274,7 +256,7 @@ void loop() {
     display.display(); // OLED Display Function for Encoder Button--------------------------------------------
     colorNum=HueRainbow[color%7];
     color++;
-    hueNumSeq++;//New Hue Code for multiple Hues Array Jan 18th
+    //hueNumSeq++;//New Hue Code for multiple Hues Array Jan 18th
     changed = TRUE;
     }
     // Encoder Funtions
@@ -291,17 +273,17 @@ void loop() {
   if (hueBright!= prevenc){
     display.printf("Bright %i\n",hueBright);//OLED printf code Hue Brightness Encoder Potentiometer-----------------
     prevenc = hueBright; 
-    changed = FALSE;
+    changed = TRUE;
     }
     if(changed) {
       setHue(BULB,hueOnOff,colorNum,hueBright,255);
       setHue(BULB4,hueOnOff,colorNum,hueBright,255);
       setHue(BULB6,hueOnOff,colorNum,hueBright,255);
       //setHue (myHueSeq[hueNumSeq%3],hueOnOff,colorNum,hueBright,255); //New Hue Code for multiple Hues Array Jan 18th
-      colorNum=HueRainbow[color%7]; //New Hue Code for multiple Hues Array Jan 18th
-      color++; //New Hue Code for multiple Hues Array Jan 18th
-      hueNumSeq++; //New Hue Code for multiple Hues Array Jan 18th
-      changed=TRUE;  //New Hue Code for multiple Hues Array Jan 18th
+      // colorNum=HueRainbow[color%7]; //New Hue Code for multiple Hues Array Jan 18th
+      // color++; //New Hue Code for multiple Hues Array Jan 18th
+      ///hueNumSeq++; //New Hue Code for multiple Hues Array Jan 18th
+     changed=FALSE;  //New Hue Code for multiple Hues Array Jan 18th
       display.display(); // OLED Display Function for Encoder Button--------------------------------------------
     }
   // NeoPixel Code with Black Button---------------------------------------------------------
