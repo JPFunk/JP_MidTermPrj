@@ -1,8 +1,7 @@
 /* 
  * Project JP_MidTermPrj
  * Author: JP
- * Date: 01/17/2024 Adding more functionality to Motion Sensor function with Mulitple Hue's
- *  Tried to add the 3 WEMO into the OnOff motion Sequence- not workign properly.
+ * Date: 01/18/2024 Final Fixes and Code Lock w/ commented out sections was not a ble to get working before end of Day
  * For comprehensive documentation and examples, please visit:
  * https://docs.particle.io/firmware/best-practices/firmware-template/
  */
@@ -95,6 +94,7 @@ const int MYPIR=0;
 int motionPin=D11;
 int pirState=LOW; //   t = millis() / 1000.0;
 int moval;//   y = 128 * sin(2 * M_PI * 1/5.0 * t) + 128;
+int movalOld;
 // Millis--------------------------
 int startime;
 // Let Device OS manage the connection to the Particle Cloud
@@ -178,7 +178,6 @@ pinMode(REDBUTTONPIN, OUTPUT);
 }
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
-// The core of your code will likely live here.
   //OLED Master display code OnOff functions in Void Loop----
   display.setCursor(0,0);
   // PhotoDiode & Bright Red LED with Pulsing Sine Wave code------------------------
@@ -195,44 +194,71 @@ void loop() {
     display.clearDisplay();
     display.printf("Diode Off\n");
     display.display();
-  }
+    }
   // Switch Code OnOff functions for Wemo RedButton and Motion Sensor w/ DIsplay Code--------------
   modeOnOff = digitalRead(modeSwitch);
   moval=digitalRead(motionPin);
   if (modeOnOff) {
     // Serial.printf("%i\n",modeOnOff);
     // Serial.printf("%i\n",moval);
+    
     if (moval==LOW){  
-      setHue (myHueSeq [hueNumSeq%3],FALSE,0,0,255);  //setHue(BULB,FALSE,0,0,255);   
+      setHue (myHueSeq [hueNumSeq%3],FALSE,colorNum,0,255);  //setHue(BULB,FALSE,0,0,255);   
       wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Beginning New Motion Code Sequnce for WEMO Array--------------------
       display.printf("Mo-WemoOff");
       wemoNumSeq++;
       hueNumSeq++;
+     // colorNum++;  //New Hue Code for multiple Hues Array Jan 18th
       } else {
-      setHue (myHueSeq [hueNumSeq%3],TRUE,0,255,255); //setHue(BULB,TRUE,0,255,255);
+      setHue (myHueSeq [hueNumSeq%3],TRUE,colorNum,255,255); //setHue(BULB,TRUE,0,255,255);
       wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Motion Sensor WEMO On FUnctions
+      colorNum=HueRainbow[color%7];// Hue Light color change code
+      color++;// Hue Light color change code
+      changed = TRUE;// Hue Light color change code
       display.printf("Mo-Wemo On");//OLED display code Motion Sensor WEMO ON
       }
       display.display(); // OLED Display Function for WEMO Button--------------------------------------------
       hueOnOff==hueOnOff;
+      //new if statement for moval and WEMO and Hue not working but tried to make sequnce in order-----**********************
+      // if ( moval == LOW && (movalOld != moval )) {
+      //   movalOld = moval;
+      //   setHue (myHueSeq [hueNumSeq%3],FALSE,colorNum,0,255); //setHue(BULB,TRUE,0,255,255);
+      //   wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //Motion Sensor WEMO On FUnctions
+      //   wemoNumSeq++;
+      //   hueNumSeq++;
+      //   display.printf("Mo-Wemo Off");//OLED display code Motion Sensor WEMO ON
+      //   } else if (moval == HIGH && (movalOld != moval)) {  
+      //   movalOld = moval;
+      //   setHue (myHueSeq [hueNumSeq%3],TRUE,colorNum,255,255);  //setHue(BULB,FALSE,0,0,255);   
+      //   wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //Beginning New Motion Code Sequnce for WEMO Array--------------------
+      //   colorNum=HueRainbow[color%7];// Hue Light color change code
+      //   color++;// Hue Light color change code
+      //   changed = TRUE;// Hue Light color change code
+      //   display.printf("Mo-Wemo On");
+      //   }
+      //   display.display(); // OLED Display Function for WEMO Button--------------------------------------------
+      //   hueOnOff==hueOnOff;
   } else {
     // Wemo Red button with added Display code-----------------------------------------
     if (redButton.isClicked()) { // Added && modeOnOff) to fix button issue
      wemoOnOff= !wemoOnOff;
     }
     if (wemoOnOff) {
+      // wemoWrite (myWemoSeq [wemoNumSeq%3], HIGH); //New Motion Code Sequnce for WEMO Array Jan 18th Not Working--------------------
       wemoWrite (MYWEMO, HIGH); //WEMO 0 On Functions
       wemoWrite (MYWEMO3, HIGH); //WEMO 3 On Functions
       wemoWrite (MYWEMO4, HIGH); //WEMO 4 On Functions
       display.printf("Wemo On\n");//OLED display code WEMO OnOff-----------------
       // Serial.printf("Turning on Wemo# %i \n", MYWEMO);
-    } else {
+      } else {
+      // wemoWrite (myWemoSeq [wemoNumSeq%3], LOW); //New Motion Code Sequnce for WEMO Array Jan 18th Not Working--------------------
+      // wemoNumSeq++;  //New Motion Code Sequnce for WEMO Array Jan 18th Not Working--------------------
       wemoWrite (MYWEMO, LOW); //WEMO 0 Off Functions
       wemoWrite (MYWEMO3, LOW); //WEMO 3 Off Functions
-      wemoWrite (MYWEMO4, HIGH); //WEMO 4 Off Functions
+      wemoWrite (MYWEMO4, LOW); //WEMO 4 Off Functions
       display.printf("Wemo Off\n");//OLED display code WEMO OnOff-----------------
       // Serial.printf("Turning off Wemo# %i \n", MYWEMO);
-    }
+      }
     display.display(); // OLED Display Function for Red Button Wemo--------------------------------------------
   }
   // Hue Button Functions with added Display code----------------------------------------------------------------------------------------
@@ -241,13 +267,14 @@ void loop() {
     display.printf("Hue On/Off");//OLED display code Hue Ligths OnOff-----------------
     display.display(); // OLED Display Function for Gray Button Hue On Off--------------------------------------------
     hueOnOff=!hueOnOff;
-  }
+    }
   //Encoder Button to cycle through colors with added Display code-----------------------------------------------------------------------
   if (myEncBtn.isPressed()) {
     display.printf("Bulb%iColor%06i",BULB%i,HueRainbow[color%7]);//OLED display code Hue Color-----------------
     display.display(); // OLED Display Function for Encoder Button--------------------------------------------
     colorNum=HueRainbow[color%7];
     color++;
+    hueNumSeq++;//New Hue Code for multiple Hues Array Jan 18th
     changed = TRUE;
     }
     // Encoder Funtions
@@ -264,16 +291,19 @@ void loop() {
   if (hueBright!= prevenc){
     display.printf("Bright %i\n",hueBright);//OLED printf code Hue Brightness Encoder Potentiometer-----------------
     prevenc = hueBright; 
-    changed = TRUE;
+    changed = FALSE;
     }
     if(changed) {
       setHue(BULB,hueOnOff,colorNum,hueBright,255);
       setHue(BULB4,hueOnOff,colorNum,hueBright,255);
       setHue(BULB6,hueOnOff,colorNum,hueBright,255);
-      changed=FALSE;
+      //setHue (myHueSeq[hueNumSeq%3],hueOnOff,colorNum,hueBright,255); //New Hue Code for multiple Hues Array Jan 18th
+      colorNum=HueRainbow[color%7]; //New Hue Code for multiple Hues Array Jan 18th
+      color++; //New Hue Code for multiple Hues Array Jan 18th
+      hueNumSeq++; //New Hue Code for multiple Hues Array Jan 18th
+      changed=TRUE;  //New Hue Code for multiple Hues Array Jan 18th
       display.display(); // OLED Display Function for Encoder Button--------------------------------------------
     }
-
   // NeoPixel Code with Black Button---------------------------------------------------------
   if (blackButton.isClicked()) {
     modeSeq++;
@@ -317,12 +347,6 @@ void loop() {
     if (i>6) {i=0;}
     // delay(300);
     display.display(); // OLED Display Function for NeoPixel--------------------------------------------
-  }
- // new code addition for turnign off Neoplixels
-  if (modeSeq%4==4) {
-    display.printf("NEOPIX Off");//added OLED display code -----------------
-    display.display(); // OLED Display Function for Encoder Button--------------------------------------------
-    pixel.clear (); // Clear Pixels----------------
   }
   display.display(); // OLED Display Function Temp-------------------------------------------
 }

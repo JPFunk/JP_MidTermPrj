@@ -18,13 +18,14 @@ Manual controls include:
 * OLED display that features screen grahpics and detailed readouts of all manual & auto Functions.
 * Buttons, Swtich and Controller to toggle between various features and Automatic Mode.
 * Multi fuinctional NeoPixel lights that illuminate the Pyramdid Acryclic top with laser engraved Details.
-* Hue lights functions including On/Off with Color changing and Brightness.
+* 3 Hue lights functions including On/Off with Color changing and Brightness.
 * 3 WEMO outlets On/Off control.
 
 Automatic controls features:
-* Motion Sensor for 3 WEMO Autmomatic OnOff function.
-* Neoplixel light show.
-* PhotoDiode with LED's for automatic night/dark room space for ambient Pyramid and Logo glowing functions.
+* Motion Sensor for a 3 WEMO Array Autmomatic OnOff function.
+* Motion Sensor for a 3 Hue Array Autmomatic OnOff function.
+* Neoplixel light show with 3 Modes/Functions
+* PhotoDiode with 3 x LED's for automatic night/dark room space for ambient Pyramid and Logo glowing functions.
 
 This repository includes:
 * JP_MidTermPrj.cpp
